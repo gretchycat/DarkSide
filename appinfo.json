@@ -1,0 +1,187 @@
+{
+  "uuid": "971f48bf-f215-454e-8cad-8b6949c62f1b",
+  "shortName": "DarkSide",
+  "longName": "DarkSide",
+  "companyName": "Gretchen Maculo",
+  "versionCode": 1,
+  "versionLabel": "1.0.0",
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {
+	    "city": 0,
+    	"temperature0": 1,
+    	"icon0": 2,
+			"min0":3,
+			"max0":4,
+			"humidity0":5,
+			"pressure0":6,
+			"date0":7,
+      "temperature1": 8,
+    	"icon1": 9,
+			"min1":10,
+			"max1":11,
+			"humidity1":12,
+			"pressure1":13,
+			"date1":14,
+    	"temperature2": 15,
+    	"icon2": 16,
+			"min2":17,
+			"max2":18,
+			"humidity2":19,
+			"pressure2":20,
+			"date2":21,
+    	"temperature3": 22,
+    	"icon3": 23,
+			"min3":24,
+			"max3":25,
+			"humidity3":26,
+			"pressure3":27,
+			"date3":28,
+    	"temperature4": 29,
+    	"icon4": 30,
+			"min4":31,
+			"max4":32,
+			"humidity4":33,
+			"pressure4":34,
+			"date4":35
+  },
+  "resources": {
+    "media": [
+		  {
+     "type": "font",
+     "name": "FONT_BEYOND_30_BOLD",
+     "file": "fonts/BeyondTheLightedStage.ttf"
+   		},
+			{
+     "type": "font",
+     "name": "FONT_BEYOND_24_BOLD",
+     "file": "fonts/BeyondTheLightedStage.ttf"
+   		},
+			{
+     "type": "font",
+     "name": "FONT_BEYOND_16",
+     "file": "fonts/BeyondTheLightedStage.ttf"
+   		},
+			{
+     "type": "font",
+     "name": "FONT_UBUNTU_10",
+     "file": "fonts/Ubuntu-M.ttf"
+   		},		{
+     "type": "font",
+     "name": "FONT_UBUNTU_14",
+     "file": "fonts/Ubuntu-M.ttf"
+   		},		{
+     "type": "font",
+     "name": "FONT_UBUNTU_14_BOLD",
+     "file": "fonts/Ubuntu-M.ttf"
+   		},
+			{
+     "type": "png",
+     "name": "DARKSIDE",
+     "file": "images/darkside.png"
+   		},
+			{
+     "type": "png",
+     "name": "BATTERY_0",
+     "file": "images/b000.png"
+   		},
+			{
+     "type": "png",
+     "name": "BATTERY_10",
+     "file": "images/b010.png"
+   		},
+			{
+     "type": "png",
+     "name": "BATTERY_20",
+     "file": "images/b020.png"
+   		},
+			{
+     "type": "png",
+     "name": "BATTERY_30",
+     "file": "images/b030.png"
+   		},
+			{
+     "type": "png",
+     "name": "BATTERY_40",
+     "file": "images/b040.png"
+   		},
+			{
+     "type": "png",
+     "name": "BATTERY_50",
+     "file": "images/b050.png"
+   		},
+			{
+     "type": "png",
+     "name": "BATTERY_60",
+     "file": "images/b060.png"
+   		},
+			{
+     "type": "png",
+     "name": "BATTERY_70",
+     "file": "images/b070.png"
+   		},
+			{
+     "type": "png",
+     "name": "BATTERY_80",
+     "file": "images/b080.png"
+   		},
+			{
+     "type": "png",
+     "name": "BATTERY_90",
+     "file": "images/b090.png"
+   		},
+			{
+     "type": "png",
+     "name": "BATTERY_100",
+     "file": "images/b100.png"
+   		},
+			{
+     "type": "png",
+     "name": "CHARGE",
+     "file": "images/charge.png"
+   		},
+			{
+     "type": "png",
+     "name": "BTON",
+     "file": "images/bton.png"
+   		},
+			{
+     "type": "png",
+     "name": "BTOFF",
+     "file": "images/btoff.png"
+   		},
+			{
+     "type": "png",
+     "name": "BACK",
+     "file": "images/back.png"
+   		},
+      {
+        "type": "png",
+        "name": "IMAGE_SUN",
+        "file": "images/sun.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_RAIN",
+        "file": "images/rain.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_CLOUD",
+        "file": "images/cloud.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_SNOW",
+        "file": "images/snow.png"
+      },
+      {
+        "type": "png",
+				"menuIcon": true,
+        "name": "IMAGE_MENU_ICON",
+        "file": "images/darkside-icon.png"
+      }
+		]
+  }
+}
