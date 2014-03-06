@@ -3,7 +3,7 @@
   "shortName": "DarkSide",
   "longName": "DarkSide",
   "companyName": "Gretchen Maculo",
-  "versionCode": 1.0.1,
+  "versionCode": 101,
   "versionLabel": "1.0.1",
   "watchapp": {
     "watchface": true
