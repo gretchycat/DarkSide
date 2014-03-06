@@ -30,7 +30,7 @@ function fetchWeather(latitude, longitude) {
   req.onload = function(e) {
     if (req.readyState == 4) {
       if(req.status == 200) {
-//        console.log(req.responseText);
+        console.log(req.responseText);
         response = JSON.parse(req.responseText);
         if (response && response.list && response.list.length > 0) {
           city = response.city.name;
