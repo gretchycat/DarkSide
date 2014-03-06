@@ -1,16 +1,28 @@
 
 function iconFromWeatherId(weatherId) {
-  if (weatherId < 600) {
-    return 2;
+  if (weatherId < 300) {
+		return 4; //thunder
+	} else if (weatherId < 600) {
+		if(weatherId == 511)	//freezing rain
+			return 3;
+    return 2;	//rain
   } else if (weatherId < 700) {
-    return 3;
-  } else if (weatherId > 800) {
-    return 1;
+    return 3;	//snow
+	} else if (weatherId < 800) {
+		return 5; //mist
+  } else if (weatherId < 900) {
+		if (weatherId == 800)
+			return 0;
+    return 1;	//cloud
+  } else if (weatherId < 910) {
+		return 6;	//extreme
+	} else if (weatherId < 957)	{
+    return 0;	//sun
   } else {
-    return 0;
-  }
+		return 6;
+	}
 }
-
+ 
 function fetchWeather(latitude, longitude) {
   var response;
   var req = new XMLHttpRequest();
