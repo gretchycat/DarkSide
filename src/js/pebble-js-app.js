@@ -18,7 +18,7 @@ function fetchWeather(latitude, longitude) {
   req.onload = function(e) {
     if (req.readyState == 4) {
       if(req.status == 200) {
-    //    console.log(req.responseText);
+//        console.log(req.responseText);
         response = JSON.parse(req.responseText);
         if (response && response.list && response.list.length > 0) {
           city = response.city.name;
@@ -28,7 +28,30 @@ function fetchWeather(latitude, longitude) {
 					for(var i=0;i<response.list.length;i++)
 					{
 	          var w = response.list[i];
-						data["temperature"+i]=Math.round(w.temp.day - 273.15);
+						var d = new Date();
+						var temp;
+						var hour=d.getHours();
+						if(hour<10)
+						{
+							temp=w.temp.morn;
+//							console.log("morning");
+						}
+						else if(hour<17)
+						{
+							temp=w.temp.day;
+//							console.log("day");
+						}
+						else if(hour<20)
+						{
+							temp=w.temp.eve;
+//							console.log("evening");
+						}
+						else
+						{
+							temp=w.temp.night;
+//							console.log("night");
+						}
+						data["temperature"+i]=Math.round(temp - 273.15);
 						data["icon"+i]=iconFromWeatherId(w.weather[0].id);
 						data["min"+i]=Math.round(w.temp.min - 273.15);
 						data["max"+i]=Math.round(w.temp.max - 273.15);
