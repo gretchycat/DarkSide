@@ -25,45 +25,35 @@ function iconFromWeatherId(weatherId) {
  
 function fetchWeather(latitude, longitude) {
   var response;
+	var responseW;
   var req = new XMLHttpRequest();
-	req.open('GET', "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=5&mode=json", true);
+  var reqW = new XMLHttpRequest();
+	req.open('GET', "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=5&mode=json", false);
   req.onload = function(e) {
     if (req.readyState == 4) {
       if(req.status == 200) {
-        console.log(req.responseText);
+      //  console.log(req.responseText);
         response = JSON.parse(req.responseText);
         if (response && response.list && response.list.length > 0) {
           city = response.city.name;
 					var data={
 						"city":response.city.name
 					}
+					reqW.open('GET', "http://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&mode=json", false);
+				  reqW.onload = function(e) {
+    				if (reqW.readyState == 4) {
+      				if(reqW.status == 200) {
+					//			console.log("getting weather.");
+				  //      console.log(reqW.responseText);
+        				responseW = JSON.parse(reqW.responseText);
+							}
+						}
+					}
+					reqW.send(null);
 					for(var i=0;i<response.list.length;i++)
 					{
 	          var w = response.list[i];
-						var d = new Date();
-						var temp;
-						var hour=d.getHours();
-						if(hour<10)
-						{
-							temp=w.temp.morn;
-//							console.log("morning");
-						}
-						else if(hour<17)
-						{
-							temp=w.temp.day;
-//							console.log("day");
-						}
-						else if(hour<20)
-						{
-							temp=w.temp.eve;
-//							console.log("evening");
-						}
-						else
-						{
-							temp=w.temp.night;
-//							console.log("night");
-						}
-						data["temperature"+i]=Math.round(temp - 273.15);
+						data["temperature"+i]=Math.round(responseW.main.temp - 273.15);
 						data["icon"+i]=iconFromWeatherId(w.weather[0].id);
 						data["min"+i]=Math.round(w.temp.min - 273.15);
 						data["max"+i]=Math.round(w.temp.max - 273.15);
@@ -71,6 +61,7 @@ function fetchWeather(latitude, longitude) {
 						data["pressure"+i]=w.pressure;
 						data["date"+i]=w.dt;
 					}
+					console.log("To Pebble: "+JSON.stringify(data));
           Pebble.sendAppMessage(data);
         }
 
@@ -80,6 +71,7 @@ function fetchWeather(latitude, longitude) {
     }
   }
   req.send(null);
+
 }
 
 function locationSuccess(pos) {

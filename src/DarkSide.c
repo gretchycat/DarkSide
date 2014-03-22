@@ -2,6 +2,8 @@
 
 #define bounds layer_get_bounds(window_get_root_layer(window))
 
+#define secInDay 60*60*24
+
 #define timeX 0
 #define timeY 2
 #define timeW 103
@@ -13,7 +15,7 @@
 #define secX (timeW+timeX)
 #define secY (6+timeY)
 #define secW (144-secX)
-#define secH 25
+#define secH 25+5
 #define secA GTextAlignmentCenter
 #define secFormat "%P"
 #define secFormat24 "%S"
@@ -54,8 +56,8 @@
 #define calDayW ((144/7)-1)
 #define calDayH ((calH/calR)-1)
 #define calA GTextAlignmentCenter
-#define TAPTIMER 10
-#define WEATHERTIMER 60*30
+#define TAPTIMER 15
+#define WEATHERTIMER 30*60
 #define FORECASTDAYS 5
 
 char str_time[10];
@@ -94,7 +96,7 @@ static BitmapLayer *back_layer=NULL;
 static BitmapLayer *darkside_layer=NULL;
 static int today=0;
 static int tapsec=0;
-static int wetsec=0;
+static int wetsec=WEATHERTIMER;
 static TextLayer *city_layer=NULL;
 static TextLayer *temperature_layer=NULL;
 static BitmapLayer *icon_layer=NULL;
@@ -212,10 +214,11 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     case WEATHER_ICON:
       bitmap_layer_set_bitmap(icon_layer, weather_icon[new_tuple->value->uint8]);
       break;
-    case WEATHER_TEMPERATURE:
-			snprintf(temp[0], sizeof(temp[0]), "%d\u00B0", convertTemp((int)new_tuple->value->int32));
-      text_layer_set_text(temperature_layer, temp[0]);
-      break;
+ //   case WEATHER_TEMPERATURE:
+//			snprintf(temp[0], sizeof(temp[0]), "%d\u00B0", convertTemp((int)new_tuple->value->int32));
+ // APP_LOG(APP_LOG_LEVEL_DEBUG, "Temperature: %d", (int)new_tuple->value->int32);
+ //     text_layer_set_text(temperature_layer, temp[0]);
+  //    break;
     case WEATHER_CITY:
       text_layer_set_text(city_layer, new_tuple->value->cstring);
       break;
@@ -224,6 +227,11 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 	{	
 		if(key==Wtemps[x])
 		{
+			snprintf(temp[x], sizeof(temp[x]), "%d\u00B0", convertTemp((int)new_tuple->value->int32));
+
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "Temperature%d: %d",x, (int)new_tuple->value->int32);
+			if(!x)
+				text_layer_set_text(temperature_layer, temp[x]);
 		}
 		if(key==Wmin[x])
 		{
@@ -248,21 +256,19 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 	}
 }
 
-static void send_cmd(void) {
-  Tuplet value = TupletInteger(1, 1);
-
-  DictionaryIterator *iter;
-  app_message_outbox_begin(&iter);
-
-  if (iter == NULL) {
-    return;
-  }
-
-  dict_write_tuplet(iter, &value);
-  dict_write_end(iter);
-
-  app_message_outbox_send();
-}
+//static void send_cmd(void) 
+//{
+//	Tuplet value;// = TupletInteger(1, 1);
+ // DictionaryIterator *iter;
+ // app_message_outbox_begin(&iter);
+//  if (iter == NULL) 
+//	{
+//    return;
+//  }
+//  dict_write_tuplet(iter, &value);
+ // dict_write_end(iter);
+//  app_message_outbox_send();
+//}
 
 static void refreshTime(struct tm *tm)
 {
@@ -300,7 +306,7 @@ static void drawTime(Window* window)
 {
   time_layer = text_layer_create((GRect) { .origin = { timeX, timeY }, .size = { timeW, timeH } });
 	text_layer_set_text_color(time_layer, GColorWhite);
-	text_layer_set_background_color(time_layer, GColorBlack);
+	text_layer_set_background_color(time_layer, GColorClear);
 	text_layer_set_font(time_layer, timeF); 
   text_layer_set_text_alignment(time_layer, timeA);
   text_layer_set_text(time_layer, str_time);
@@ -311,7 +317,7 @@ static void drawSec(Window* window)
 {
   sec_layer = text_layer_create((GRect) { .origin = { secX, secY }, .size = { secW, secH } });
 	text_layer_set_text_color(sec_layer, GColorWhite);
-	text_layer_set_background_color(sec_layer, GColorBlack);
+	text_layer_set_background_color(sec_layer, GColorClear);
 	text_layer_set_font(sec_layer, secF); 
   text_layer_set_text_alignment(sec_layer, secA);
   text_layer_set_text(sec_layer, str_sec);
@@ -322,7 +328,7 @@ static void drawDate(Window* window)
 {
   date_layer = text_layer_create((GRect) { .origin = { dateX, dateY }, .size = { dateW, dateH } });
 	text_layer_set_text_color(date_layer, GColorWhite);
-	text_layer_set_background_color(date_layer, GColorBlack);
+	text_layer_set_background_color(date_layer, GColorClear);
 	text_layer_set_font(date_layer, dateF); 
   text_layer_set_text_alignment(date_layer, dateA);
   text_layer_set_text(date_layer, str_date);
@@ -369,7 +375,8 @@ static void weatherTimer()
 		showWeatherLayer();
 		wetsec=WEATHERTIMER;
 		APP_LOG(APP_LOG_LEVEL_INFO, "Updating weather.");
-  	send_cmd();
+  //	send_cmd();
+  	app_message_outbox_send();
 		//weather update
 	}
 	wetsec--;
@@ -430,6 +437,8 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed)
 		updateCalendar();
   handle_battery(battery_state_service_peek());
 	tapTimer();
+	if((tick_time->tm_sec==0)&&(tick_time->tm_min==0))
+		vibes_short_pulse();
 	weatherTimer();
 }
 
@@ -533,7 +542,6 @@ static void drawWeather(Window* window)
 	int tempWidth=40;
 	icon_layer = bitmap_layer_create(GRect(144-tempWidth-16, 0, 15, 15));
   layer_add_child(weather_layer, bitmap_layer_get_layer(icon_layer));
-
   temperature_layer = text_layer_create(GRect(144-tempWidth, 0, tempWidth, 16));
   text_layer_set_text_color(temperature_layer, GColorWhite);
   text_layer_set_background_color(temperature_layer, GColorClear);
@@ -579,12 +587,8 @@ static void drawWeather(Window* window)
 		text_layer_set_text_alignment(tempMax[x], GTextAlignmentCenter);
 		text_layer_set_text(tempMax[x], "---\u00B0");
 		layer_add_child(weather_layer, text_layer_get_layer(tempMax[x]));
-
-
-
-
 	}
-
+	time_t t=time(NULL);
   Tuplet initial_values[] = {
     TupletCString(WEATHER_CITY, "Weather Loading..."),
     TupletInteger(WEATHER_TEMPERATURE, 0),
@@ -593,41 +597,39 @@ static void drawWeather(Window* window)
 		TupletInteger(WEATHER_MAX, 0),
 		TupletInteger(WEATHER_HUMIDITY, 0),
 		TupletInteger(WEATHER_PRESSURE, 800),
-		TupletInteger(WEATHER_DATE,0),
+		TupletInteger(WEATHER_DATE,t),
     TupletInteger(WEATHER_TEMPERATURE2, 0),
     TupletInteger(WEATHER_ICON2, (uint8_t) 1),
 		TupletInteger(WEATHER_MIN2, 0),
 		TupletInteger(WEATHER_MAX2, 0),
 		TupletInteger(WEATHER_HUMIDITY2, 0),
 		TupletInteger(WEATHER_PRESSURE2, 800),
-		TupletInteger(WEATHER_DATE2,0),
+		TupletInteger(WEATHER_DATE2,t+(secInDay)),
     TupletInteger(WEATHER_TEMPERATURE3, 0),
     TupletInteger(WEATHER_ICON3, (uint8_t) 1),
 		TupletInteger(WEATHER_MIN3, 0),
 		TupletInteger(WEATHER_MAX3, 0),
 		TupletInteger(WEATHER_HUMIDITY3, 0),
 		TupletInteger(WEATHER_PRESSURE3, 800),
-		TupletInteger(WEATHER_DATE3,0),
+		TupletInteger(WEATHER_DATE3,t+(secInDay*2)),
     TupletInteger(WEATHER_TEMPERATURE4, 0),
     TupletInteger(WEATHER_ICON4, (uint8_t) 1),
 		TupletInteger(WEATHER_MIN4, 0),
 		TupletInteger(WEATHER_MAX4, 0),
 		TupletInteger(WEATHER_HUMIDITY4, 0),
 		TupletInteger(WEATHER_PRESSURE4, 800),
-		TupletInteger(WEATHER_DATE4,0),
+		TupletInteger(WEATHER_DATE4,t+(secInDay*3)),
     TupletInteger(WEATHER_TEMPERATURE5, 0),
     TupletInteger(WEATHER_ICON5, (uint8_t) 1),
 		TupletInteger(WEATHER_MIN5, 0),
 		TupletInteger(WEATHER_MAX5, 0),
 		TupletInteger(WEATHER_HUMIDITY5, 0),
 		TupletInteger(WEATHER_PRESSURE5, 800),
-		TupletInteger(WEATHER_DATE5,0),
+		TupletInteger(WEATHER_DATE5, t+(secInDay*4)),
   };
 
-  app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
-      sync_tuple_changed_callback, sync_error_callback, NULL);
-
-  send_cmd();
+  app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values), sync_tuple_changed_callback, sync_error_callback, NULL);
+ //send_cmd();
 
 }
 
@@ -718,7 +720,6 @@ static void init(void)
   const int inbound_size = 4000;
   const int outbound_size = 4000;
   app_message_open(inbound_size, outbound_size);
-
   window_stack_push(window, animated);
 }
 
