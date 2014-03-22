@@ -5,7 +5,7 @@
 #define secInDay 60*60*24
 
 #define timeX 0
-#define timeY 2
+#define timeY 1
 #define timeW 103
 #define timeH 31
 #define timeA GTextAlignmentCenter
@@ -21,7 +21,7 @@
 #define secFormat24 "%S"
 
 #define dateX 3
-#define dateY (timeY+timeH+2)
+#define dateY (timeY+timeH+3)
 #define dateW (bounds.size.w-(2*dateX))
 #define dateH 20
 #define dateA GTextAlignmentCenter
@@ -31,7 +31,7 @@
 #define batW 16
 #define batH 8
 #define batX (144-batW-chargeW-1)
-#define batY 0
+#define batY 1
 
 #define chargeW 8
 #define chargeH 8
@@ -111,7 +111,7 @@ static GBitmap *weather_icon[4];
 static AppSync sync;
 static uint8_t sync_buffer[4000];
 
-int convertTemp(int c)
+inline int convertTemp(int c)
 {
 	if(useFahrenheit)
 		return (c*9/5)+32;
@@ -214,11 +214,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     case WEATHER_ICON:
       bitmap_layer_set_bitmap(icon_layer, weather_icon[new_tuple->value->uint8]);
       break;
- //   case WEATHER_TEMPERATURE:
-//			snprintf(temp[0], sizeof(temp[0]), "%d\u00B0", convertTemp((int)new_tuple->value->int32));
- // APP_LOG(APP_LOG_LEVEL_DEBUG, "Temperature: %d", (int)new_tuple->value->int32);
- //     text_layer_set_text(temperature_layer, temp[0]);
-  //    break;
     case WEATHER_CITY:
       text_layer_set_text(city_layer, new_tuple->value->cstring);
       break;
@@ -256,20 +251,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 	}
 }
 
-//static void send_cmd(void) 
-//{
-//	Tuplet value;// = TupletInteger(1, 1);
- // DictionaryIterator *iter;
- // app_message_outbox_begin(&iter);
-//  if (iter == NULL) 
-//	{
-//    return;
-//  }
-//  dict_write_tuplet(iter, &value);
- // dict_write_end(iter);
-//  app_message_outbox_send();
-//}
-
 static void refreshTime(struct tm *tm)
 {
 	if(clock_is_24h_style())
@@ -284,7 +265,6 @@ static void refreshTime(struct tm *tm)
 		strftime(str_sec, sizeof(str_sec), secFormat, tm);
 		strftime(str_date, sizeof(str_date), dateFormat, tm);
 	}
-	
 }
 
 static void updateTime()
@@ -375,7 +355,6 @@ static void weatherTimer()
 		showWeatherLayer();
 		wetsec=WEATHERTIMER;
 		APP_LOG(APP_LOG_LEVEL_INFO, "Updating weather.");
-  //	send_cmd();
   	app_message_outbox_send();
 		//weather update
 	}
@@ -425,8 +404,6 @@ static void updateCalendar()
 	}
 }
 
-
-// Called once per second
 static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed)
 {
 	refreshTime(tick_time);
@@ -435,7 +412,6 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed)
 	updateDate();
 	if(today!=tick_time->tm_mday)
 		updateCalendar();
-  handle_battery(battery_state_service_peek());
 	tapTimer();
 	if((tick_time->tm_sec==0)&&(tick_time->tm_min==0))
 		vibes_short_pulse();
@@ -451,8 +427,6 @@ static void drawBattery(Window *window)
 	bitmap_layer_set_bitmap(charge_layer, charge);
 	layer_set_hidden(bitmap_layer_get_layer(charge_layer), true);
 	layer_add_child(window_layer, bitmap_layer_get_layer(charge_layer));
-
-
 }
 
 static void drawBluetooth(Window *window)
@@ -478,8 +452,8 @@ static void drawDecoration(Window *window)
 	darkside_layer=bitmap_layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
 	bitmap_layer_set_bitmap(darkside_layer, darkside);
 	layer_add_child(window_layer, bitmap_layer_get_layer(darkside_layer));
-
 }
+
 static void drawCalendar(Window* window)
 {
 	time_t t=time(NULL);
@@ -630,7 +604,6 @@ static void drawWeather(Window* window)
 
   app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values), sync_tuple_changed_callback, sync_error_callback, NULL);
  //send_cmd();
-
 }
 
 static void drawPedometer(Window *window)
@@ -650,6 +623,9 @@ static void window_load(Window *window)
 	drawBattery(window);
 	drawBluetooth(window);
 	drawPedometer(window);
+
+  handle_battery(battery_state_service_peek());
+	handle_bluetooth(bluetooth_connection_service_peek());
 }
 
 static void window_unload(Window *window) 
