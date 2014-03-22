@@ -17,7 +17,7 @@
 #define secW (144-secX)
 #define secH 25+5
 #define secA GTextAlignmentCenter
-#define secFormat "%P"
+#define secFormat "%S"
 #define secFormat24 "%S"
 
 #define dateX 3
@@ -81,6 +81,8 @@ static GBitmap *bton=NULL;
 static GBitmap *btoff=NULL;
 static GBitmap *back=NULL;
 static GBitmap *darkside=NULL;
+static GBitmap *am=NULL;
+static GBitmap *pm=NULL;
 static Window *window=NULL;
 static Layer *window_layer=NULL;
 static Layer *weather_layer=NULL;
@@ -94,8 +96,10 @@ static BitmapLayer *bat_layer=NULL;
 static BitmapLayer *charge_layer=NULL;
 static BitmapLayer *back_layer=NULL;
 static BitmapLayer *darkside_layer=NULL;
+static BitmapLayer *ampm=NULL;
 static int today=0;
 static int tapsec=0;
+bool isAM=true;
 static int wetsec=WEATHERTIMER;
 static TextLayer *city_layer=NULL;
 static TextLayer *temperature_layer=NULL;
@@ -253,11 +257,12 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
 static void refreshTime(struct tm *tm)
 {
+	isAM=(tm->tm_hour<12);
 	if(clock_is_24h_style())
 	{
 		strftime(str_time, sizeof(str_time), timeFormat24, tm);
-		strftime(str_sec, sizeof(str_sec), secFormat24, tm);
-		strftime(str_date, sizeof(str_date), dateFormat24, tm);
+		strftime(str_sec, sizeof(str_sec), secFormat, tm);
+		strftime(str_date, sizeof(str_date), dateFormat24, tm);		
 	}
 	else
 	{
@@ -270,6 +275,11 @@ static void refreshTime(struct tm *tm)
 static void updateTime()
 {
   text_layer_set_text(time_layer, str_time);
+	if(isAM)
+		bitmap_layer_set_bitmap(ampm, am);
+	else
+	  bitmap_layer_set_bitmap(ampm, pm);
+	layer_set_hidden(bitmap_layer_get_layer(ampm), clock_is_24h_style());
 }
 
 static void updateSec()
@@ -291,6 +301,8 @@ static void drawTime(Window* window)
   text_layer_set_text_alignment(time_layer, timeA);
   text_layer_set_text(time_layer, str_time);
   layer_add_child(window_layer, text_layer_get_layer(time_layer));
+	ampm=bitmap_layer_create((GRect) { .origin = { secX-10, timeY+9 }, .size = { 9, 5 } });
+  layer_add_child(window_layer, bitmap_layer_get_layer(ampm));
 }
 
 static void drawSec(Window* window)
@@ -678,6 +690,9 @@ static void init(void)
 
 	bton=gbitmap_create_with_resource(RESOURCE_ID_BTON);
 	btoff=gbitmap_create_with_resource(RESOURCE_ID_BTOFF);
+
+	am=gbitmap_create_with_resource(RESOURCE_ID_AM);
+	pm=gbitmap_create_with_resource(RESOURCE_ID_PM);
 
 	tick_timer_service_subscribe(SECOND_UNIT, &handle_second_tick);
   battery_state_service_subscribe(&handle_battery);

@@ -83,6 +83,16 @@
     },
     {
       "type": "png",
+      "name": "AM",
+      "file": "images/am.png"
+    },
+    {
+      "type": "png",
+      "name": "PM",
+      "file": "images/pm.png"
+    },
+    {
+      "type": "png",
       "name": "BATTERY_0",
       "file": "images/b000.png"
     },

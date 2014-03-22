@@ -22,7 +22,30 @@ function iconFromWeatherId(weatherId) {
 		return 6;
 	}
 }
- 
+
+function fetchCalendar(publicCal)
+{
+	if(strlen(publicCal))
+	{
+	  var response;
+	  var req = new XMLHttpRequest();
+		req.open('GET', "http://www.google.com/calendar/feeds/"+publicCal+"/public/full?alt=json-in-script&callback=insertAgenda&orderby=starttime&max-results=15&singleevents=true&sortorder=ascending&futureevents=true", false);
+	  req.onload = function(e)
+		{
+ 	  	if (req.readyState == 4)
+			{
+      	if(req.status == 200) 
+				{
+      //  console.log(req.responseText);
+      		response = JSON.parse(req.responseText);
+				}
+			}
+		}
+	req.send(null);
+	}
+}
+
+
 function fetchWeather(latitude, longitude) {
   var response;
 	var responseW;
