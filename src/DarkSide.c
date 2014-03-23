@@ -17,7 +17,7 @@
 #define secW (144-secX)
 #define secH 25+5
 #define secA GTextAlignmentCenter
-#define secFormat "%S"
+#define secFormat "%P"
 #define secFormat24 "%S"
 
 #define dateX 3
@@ -261,13 +261,13 @@ static void refreshTime(struct tm *tm)
 	if(clock_is_24h_style())
 	{
 		strftime(str_time, sizeof(str_time), timeFormat24, tm);
-		strftime(str_sec, sizeof(str_sec), secFormat, tm);
+		strftime(str_sec, sizeof(str_sec), secFormat24, tm);
 		strftime(str_date, sizeof(str_date), dateFormat24, tm);		
 	}
 	else
 	{
 		strftime(str_time, sizeof(str_time), timeFormat, tm);
-		strftime(str_sec, sizeof(str_sec), secFormat, tm);
+		strftime(str_sec, sizeof(str_sec), secFormat24, tm);
 		strftime(str_date, sizeof(str_date), dateFormat, tm);
 	}
 }
@@ -301,7 +301,7 @@ static void drawTime(Window* window)
   text_layer_set_text_alignment(time_layer, timeA);
   text_layer_set_text(time_layer, str_time);
   layer_add_child(window_layer, text_layer_get_layer(time_layer));
-	ampm=bitmap_layer_create((GRect) { .origin = { secX-10, timeY+9 }, .size = { 9, 5 } });
+	ampm=bitmap_layer_create((GRect) { .origin = { secX-7, secY+2 }, .size = { 9, 5 } });
   layer_add_child(window_layer, bitmap_layer_get_layer(ampm));
 }
 
