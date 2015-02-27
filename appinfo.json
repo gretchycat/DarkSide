@@ -3,8 +3,8 @@
   "shortName": "DarkSide",
   "longName": "DarkSide",
   "companyName": "Gretchen Maculo",
-  "versionCode": 107,
-  "versionLabel": "1.7",
+  "versionCode": 108,
+  "versionLabel": "1.8",
   "watchapp": {
     "watchface": true
   },
@@ -12,222 +12,358 @@
     "ct": 0,
     "tm": 1,
     "ic0": 2,
-    "mn0":3,
-    "mx0":4,
-    "hm0":5,
-    "pr0":6,
-    "dt0":7,
+    "mn0": 3,
+    "mx0": 4,
+    "hm0": 5,
+    "pr0": 6,
+    "dt0": 7,
     "ic1": 8,
-    "mn1":9,
-    "mx1":10,
-    "hm1":11,
-    "pr1":12,
-    "dt1":13,
+    "mn1": 9,
+    "mx1": 10,
+    "hm1": 11,
+    "pr1": 12,
+    "dt1": 13,
     "ic2": 14,
-    "mn2":15,
-    "mx2":16,
-    "hm2":17,
-    "pr2":18,
-    "dt2":19,
+    "mn2": 15,
+    "mx2": 16,
+    "hm2": 17,
+    "pr2": 18,
+    "dt2": 19,
     "ic3": 20,
-    "mn3":21,
-    "mx3":22,
-    "hm3":23,
-    "pr3":24,
-    "dt3":25,
+    "mn3": 21,
+    "mx3": 22,
+    "hm3": 23,
+    "pr3": 24,
+    "dt3": 25,
     "ic4": 36,
-    "mn4":27,
-    "mx4":28,
-    "hm4":29,
-    "pr4":30,
-    "dt4":31,
-		"sr":32,
-		"ss":33,
-		"tz":34,
-		"mn":35
+    "mn4": 27,
+    "mx4": 28,
+    "hm4": 29,
+    "pr4": 30,
+    "dt4": 31,
+    "sr": 32,
+    "ss": 33,
+    "tz": 34,
+    "mn": 35
   },
   "resources": {
     "media": [
-    {
-    "type": "font",
-    "name": "FONT_BEYOND_30_BOLD",
-    "file": "fonts/BeyondTheLightedStage.ttf"
-    },
-    {
-    "type": "font",
-    "name": "FONT_BEYOND_24_BOLD",
-    "file": "fonts/BeyondTheLightedStage.ttf"
-    },
-    {
-    "type": "font",
-    "name": "FONT_BEYOND_16",
-    "file": "fonts/BeyondTheLightedStage.ttf"
-    },
-    {
-    "type": "font",
-    "name": "FONT_UBUNTU_10",
-    "file": "fonts/Ubuntu-M.ttf"
-    },  {
-    "type": "font",
-    "name": "FONT_UBUNTU_14",
-    "file": "fonts/Ubuntu-M.ttf"
-    },  {
-    "type": "font",
-    "name": "FONT_UBUNTU_14_BOLD",
-    "file": "fonts/Ubuntu-M.ttf"
-    },
-    {
-      "type": "png",
-      "name": "DARKSIDE",
-      "file": "images/darkside.png"
-    },
-    {
-      "type": "png",
-      "name": "AM",
-      "file": "images/am.png"
-    },
-    {
-      "type": "png",
-      "name": "PM",
-      "file": "images/pm.png"
-    },
-    {
-      "type": "png",
-      "name": "BATTERY_0",
-      "file": "images/b000.png"
-    },
-    {
-      "type": "png",
-      "name": "BATTERY_10",
-      "file": "images/b010.png"
-    },
-    {
-      "type": "png",
-      "name": "BATTERY_20",
-      "file": "images/b020.png"
-    },
-    {
-      "type": "png",
-      "name": "BATTERY_30",
-      "file": "images/b030.png"
-    },
-    {
-      "type": "png",
-      "name": "BATTERY_40",
-      "file": "images/b040.png"
-    },
-    {
-      "type": "png",
-      "name": "BATTERY_50",
-      "file": "images/b050.png"
-    },
-    {
-      "type": "png",
-      "name": "BATTERY_60",
-      "file": "images/b060.png"
-    },
-    {
-      "type": "png",
-      "name": "BATTERY_70",
-      "file": "images/b070.png"
-    },
-    {
-      "type": "png",
-      "name": "BATTERY_80",
-      "file": "images/b080.png"
-    },
-    {
-      "type": "png",
-      "name": "BATTERY_90",
-      "file": "images/b090.png"
-    },
-    {
-      "type": "png",
-      "name": "BATTERY_100",
-      "file": "images/b100.png"
-    },
-    {
-      "type": "png",
-      "name": "CHARGE",
-      "file": "images/charge.png"
-    },
-    {
-      "type": "png",
-      "name": "BTON",
-      "file": "images/bton.png"
-    },
-    {
-      "type": "png",
-      "name": "BTOFF",
-      "file": "images/btoff.png"
-    },
-    {
-      "type": "png",
-      "name": "BACK",
-      "file": "images/back.png"
-    },
-    {
-      "type": "png",
-      "name": "IMAGE_SUN",
-      "file": "images/sun.png"
-    },
-    {
-      "type": "png",
-      "name": "IMAGE_RAIN",
-      "file": "images/rain.png"
-    },
-    {
-      "type": "png",
-      "name": "IMAGE_CLOUD",
-      "file": "images/cloud.png"
-    },
-    {
-      "type": "png",
-      "name": "IMAGE_SNOW",
-      "file": "images/snow.png"
-    },
-    {
-      "type": "png",
-      "name": "IMAGE_THUNDER",
-      "file": "images/thunder.png"
-    },
-    {
-      "type": "png",
-      "name": "IMAGE_MIST",
-      "file": "images/mist.png"
-    },
-		{
-      "type": "png",
-      "name": "IMAGE_EXTREME",
-      "file": "images/extreme.png"
-    },
-    {
-      "type": "png-trans",
-      "name": "IMAGE_COMPASS",
-      "file": "images/compass.png"
-    },
-    {
-
-      "type": "png",
-      "name": "IMAGE_RISESET",
-      "file": "images/sunriseset.png"
-    },
-    {
-      "type": "png",
-      "name": "IMAGE_MOON",
-      "file": "images/fullmoon.png"
-    },
-    {
-      "type": "png",
-      "name": "IMAGE_MOON_SHADOW",
-      "file": "images/fullmoon_shadow.png"
-    },
-    {
-      "type": "png",
-      "menuIcon": true,
-      "name": "IMAGE_MENU_ICON",
-      "file": "images/darkside-icon.png"
-    }
+      {
+        "type": "font",
+        "name": "FONT_BEYOND_30_BOLD",
+        "file": "fonts/BeyondTheLightedStage.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_BEYOND_24_BOLD",
+        "file": "fonts/BeyondTheLightedStage.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_BEYOND_16",
+        "file": "fonts/BeyondTheLightedStage.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_UBUNTU_10",
+        "file": "fonts/Ubuntu-M.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_UBUNTU_14",
+        "file": "fonts/Ubuntu-M.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_UBUNTU_14_BOLD",
+        "file": "fonts/Ubuntu-M.ttf"
+      },
+      {
+        "type": "png",
+        "name": "DARKSIDE",
+        "file": "images/darkside.png"
+      },
+      {
+        "type": "png",
+        "name": "AM",
+        "file": "images/am.png"
+      },
+      {
+        "type": "png",
+        "name": "PM",
+        "file": "images/pm.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_0",
+        "file": "images/b000.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_10",
+        "file": "images/b010.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_20",
+        "file": "images/b020.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_30",
+        "file": "images/b030.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_40",
+        "file": "images/b040.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_50",
+        "file": "images/b050.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_60",
+        "file": "images/b060.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_70",
+        "file": "images/b070.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_80",
+        "file": "images/b080.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_90",
+        "file": "images/b090.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_100",
+        "file": "images/b100.png"
+      },
+      {
+        "type": "png",
+        "name": "CHARGE",
+        "file": "images/charge.png"
+      },
+      {
+        "type": "png",
+        "name": "BTON",
+        "file": "images/bton.png"
+      },
+      {
+        "type": "png",
+        "name": "BTOFF",
+        "file": "images/btoff.png"
+      },
+      {
+        "type": "png",
+        "name": "BACK",
+        "file": "images/back.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_SUN",
+        "file": "images/sun.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_RAIN",
+        "file": "images/rain.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_CLOUD",
+        "file": "images/cloud.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_SNOW",
+        "file": "images/snow.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_THUNDER",
+        "file": "images/thunder.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_MIST",
+        "file": "images/mist.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_EXTREME",
+        "file": "images/extreme.png"
+      },
+      {
+        "type": "png-trans",
+        "name": "IMAGE_COMPASS",
+        "file": "images/compass.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_RISESET",
+        "file": "images/sunriseset.png"
+      },
+      {
+        "type": "png",
+        "menuIcon": true,
+        "name": "IMAGE_MENU_ICON",
+        "file": "images/darkside-icon.png"
+      },
+      {
+        "type": "png",
+        "name": "C_DARKSIDE",
+        "file": "images/color/darkside.png"
+      },
+      {
+        "type": "png",
+        "name": "C_AM",
+        "file": "images/color/am.png"
+      },
+      {
+        "type": "png",
+        "name": "C_PM",
+        "file": "images/color/pm.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BATTERY_0",
+        "file": "images/color/b000.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BATTERY_10",
+        "file": "images/color/b010.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BATTERY_20",
+        "file": "images/color/b020.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BATTERY_30",
+        "file": "images/color/b030.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BATTERY_40",
+        "file": "images/color/b040.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BATTERY_50",
+        "file": "images/color/b050.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BATTERY_60",
+        "file": "images/color/b060.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BATTERY_70",
+        "file": "images/color/b070.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BATTERY_80",
+        "file": "images/color/b080.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BATTERY_90",
+        "file": "images/color/b090.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BATTERY_100",
+        "file": "images/color/b100.png"
+      },
+      {
+        "type": "png",
+        "name": "C_CHARGE",
+        "file": "images/color/charge.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BTON",
+        "file": "images/color/bton.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BTOFF",
+        "file": "images/color/btoff.png"
+      },
+      {
+        "type": "png",
+        "name": "C_BACK",
+        "file": "images/color/back.png"
+      },
+      {
+        "type": "png",
+        "name": "C_IMAGE_SUN",
+        "file": "images/color/sun.png"
+      },
+      {
+        "type": "png",
+        "name": "C_IMAGE_RAIN",
+        "file": "images/color/rain.png"
+      },
+      {
+        "type": "png",
+        "name": "C_IMAGE_CLOUD",
+        "file": "images/color/cloud.png"
+      },
+      {
+        "type": "png",
+        "name": "C_IMAGE_SNOW",
+        "file": "images/color/snow.png"
+      },
+      {
+        "type": "png",
+        "name": "C_IMAGE_THUNDER",
+        "file": "images/color/thunder.png"
+      },
+      {
+        "type": "png",
+        "name": "C_IMAGE_MIST",
+        "file": "images/color/mist.png"
+      },
+      {
+        "type": "png",
+        "name": "C_IMAGE_EXTREME",
+        "file": "images/color/extreme.png"
+      },
+      {
+        "type": "png-trans",
+        "name": "C_IMAGE_COMPASS",
+        "file": "images/color/compass.png"
+      },
+      {
+        "type": "png",
+        "name": "C_IMAGE_RISESET",
+        "file": "images/color/sunriseset.png"
+      },
+      {
+        "type": "png",
+        "name": "C_IMAGE_MENU_ICON",
+        "file": "images/color/darkside-icon.png"
+      }
     ]
-  }
+  },
+  "targetPlatforms": [
+    "aplite",
+    "basalt"
+  ],
+  "sdkVersion": "3"
 }

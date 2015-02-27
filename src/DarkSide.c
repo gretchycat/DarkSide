@@ -97,7 +97,7 @@ static GBitmap *riseset=NULL;
 static GBitmap *compass_imageb=NULL;
 static GBitmap *compass_imagew=NULL;
 static GBitmap *moon=NULL;
-static GBitmap *moon_shadow=NULL;
+//static GBitmap *phases=NULL;
 static Window *window=NULL;
 static Layer *window_layer=NULL;
 static Layer *weather_layer=NULL;
@@ -117,7 +117,6 @@ static BitmapLayer *charge_layer=NULL;
 static BitmapLayer *back_layer=NULL;
 static BitmapLayer *darkside_layer=NULL;
 static BitmapLayer *moon_layer=NULL;
-static BitmapLayer *moon_shadow_layer=NULL;
 static BitmapLayer *ampm=NULL;
 static int today=0;
 static int tapsec=0;
@@ -134,9 +133,9 @@ static TextLayer *tempMax[FORECASTDAYS];
 static TextLayer *forecastDay[FORECASTDAYS];
 static TextLayer *detailSunrise;
 static TextLayer *detailSunset;
-static TextLayer *detailTemp;
-static TextLayer *detailHumidity;
-static TextLayer *detailPrecipitation;
+//static TextLayer *detailTemp;
+//static TextLayer *detailHumidity;
+//static TextLayer *detailPrecipitation;
 static BitmapLayer *forecastIcon[FORECASTDAYS];
 char temp[FORECASTDAYS][16];
 char sunrise[20];
@@ -148,6 +147,7 @@ char max[FORECASTDAYS][16];
 static GBitmap *weather_icon[4];
 static AppSync sync;
 static uint8_t sync_buffer[550];
+int hasColor;
 
 inline int convertTemp(int c)
 {
@@ -284,14 +284,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 			break;
 		case MOON:
 			moonpct=(int)new_tuple->value->int32;
-			layer_remove_from_parent(	bitmap_layer_get_layer(moon_shadow_layer));
-			bitmap_layer_destroy(moon_shadow_layer);
-
-			moon_shadow_layer=bitmap_layer_create((GRect) { .origin = { 4+((ms*moonpct)/100), 35 }, .size = { ms, ms } });
-			bitmap_layer_set_compositing_mode(moon_shadow_layer, GCompOpAnd);
-			bitmap_layer_set_bitmap(moon_shadow_layer, moon_shadow);
-			layer_add_child(weather_detail_layer, bitmap_layer_get_layer(moon_shadow_layer));	
-
 			break;
 
 	}
@@ -492,7 +484,10 @@ static void tapTimer()
 
 static void weatherTimer()
 {
-	if(!wetsec)
+/*	char t[20];
+	sprintf(t, "wetsec: %d", wetsec);	
+	APP_LOG(APP_LOG_LEVEL_DEBUG, t);*/
+	if(wetsec<1)
 	{
 		showTapPage(1);
 		wetsec=WEATHERTIMER;
@@ -784,14 +779,10 @@ static void drawWeatherDetail(Window* window)
   text_layer_set_text_alignment(detailSunset, GTextAlignmentLeft);
   layer_add_child(weather_detail_layer, text_layer_get_layer(detailSunset));
 	moon_layer=bitmap_layer_create((GRect) { .origin = { 4, 35 }, .size = { ms, ms } });
-	bitmap_layer_set_bitmap(moon_layer, moon);
+	//choose moon image from phases
+	if(moon)
+		bitmap_layer_set_bitmap(moon_layer, moon);
 	layer_add_child(weather_detail_layer, bitmap_layer_get_layer(moon_layer));	
-	moon_shadow_layer=bitmap_layer_create((GRect) { .origin = { 4+((ms*moonpct)/100), 35 }, .size = { ms, ms } });
-	bitmap_layer_set_compositing_mode(moon_shadow_layer, GCompOpAnd);
-	bitmap_layer_set_bitmap(moon_shadow_layer, moon_shadow);
-	layer_add_child(weather_detail_layer, bitmap_layer_get_layer(moon_shadow_layer));	
-
-
 }
 
 static void drawCompass(Window* window)
@@ -854,6 +845,10 @@ static void window_unload(Window *window)
 
 static void init(void) 
 {
+	hasColor=0;
+#ifdef PBL_COLOR
+	hasColor=1;
+#endif
   const bool animated = true;
 	timeF=fonts_load_custom_font((ResHandle)resource_get_handle((uint32_t)RESOURCE_ID_FONT_BEYOND_30_BOLD));
 	secF=fonts_load_custom_font((ResHandle)resource_get_handle((uint32_t)RESOURCE_ID_FONT_BEYOND_24_BOLD));
@@ -868,31 +863,56 @@ static void init(void)
   window = window_create();
   window_set_background_color(window, GColorBlack);
 	window_layer=window_get_root_layer(window);
+	if(hasColor)
+	{
+					back=gbitmap_create_with_resource(RESOURCE_ID_C_BACK);
+					darkside=gbitmap_create_with_resource(RESOURCE_ID_C_DARKSIDE);
 
-	back=gbitmap_create_with_resource(RESOURCE_ID_BACK);
-	darkside=gbitmap_create_with_resource(RESOURCE_ID_DARKSIDE);
+					uint32_t batImages[11]={
+									RESOURCE_ID_C_BATTERY_0, RESOURCE_ID_C_BATTERY_10, RESOURCE_ID_C_BATTERY_20, 
+									RESOURCE_ID_C_BATTERY_30, RESOURCE_ID_C_BATTERY_40, RESOURCE_ID_C_BATTERY_50, 
+									RESOURCE_ID_C_BATTERY_60, RESOURCE_ID_C_BATTERY_70, RESOURCE_ID_C_BATTERY_80, 
+									RESOURCE_ID_C_BATTERY_90, RESOURCE_ID_C_BATTERY_100 };
+					for(int i=0;i<11;i++)
+									bat[i]=gbitmap_create_with_resource(batImages[i]);
 
-	const uint32_t batImages[11]={
-	RESOURCE_ID_BATTERY_0, RESOURCE_ID_BATTERY_10, RESOURCE_ID_BATTERY_20, 
-	RESOURCE_ID_BATTERY_30, RESOURCE_ID_BATTERY_40, RESOURCE_ID_BATTERY_50, 
-	RESOURCE_ID_BATTERY_60, RESOURCE_ID_BATTERY_70, RESOURCE_ID_BATTERY_80, 
-	RESOURCE_ID_BATTERY_90, RESOURCE_ID_BATTERY_100 };
-	for(int i=0;i<11;i++)
-		bat[i]=gbitmap_create_with_resource(batImages[i]);
+					charge=gbitmap_create_with_resource(RESOURCE_ID_C_CHARGE);
+					//compass_imageb=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_COMPASS_BLACK);
+					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_COMPASS_WHITE);
+					bton=gbitmap_create_with_resource(RESOURCE_ID_C_BTON);
+					btoff=gbitmap_create_with_resource(RESOURCE_ID_C_BTOFF);
 
-	charge=gbitmap_create_with_resource(RESOURCE_ID_CHARGE);
-	//compass_imageb=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS_BLACK);
-	compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS_WHITE);
-	bton=gbitmap_create_with_resource(RESOURCE_ID_BTON);
-	btoff=gbitmap_create_with_resource(RESOURCE_ID_BTOFF);
+					am=gbitmap_create_with_resource(RESOURCE_ID_C_AM);
+					pm=gbitmap_create_with_resource(RESOURCE_ID_C_PM);
+					riseset=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_RISESET);
+					moon=NULL;
+					//phases=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_MOON_PHASES);
+	}
+	else
+	{
+					back=gbitmap_create_with_resource(RESOURCE_ID_BACK);
+					darkside=gbitmap_create_with_resource(RESOURCE_ID_DARKSIDE);
 
-	am=gbitmap_create_with_resource(RESOURCE_ID_AM);
-	pm=gbitmap_create_with_resource(RESOURCE_ID_PM);
-	riseset=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_RISESET);
-	moon=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MOON);
-	moon_shadow=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MOON_SHADOW);
+					uint32_t batImages[11]={
+									RESOURCE_ID_BATTERY_0, RESOURCE_ID_BATTERY_10, RESOURCE_ID_BATTERY_20, 
+									RESOURCE_ID_BATTERY_30, RESOURCE_ID_BATTERY_40, RESOURCE_ID_BATTERY_50, 
+									RESOURCE_ID_BATTERY_60, RESOURCE_ID_BATTERY_70, RESOURCE_ID_BATTERY_80, 
+									RESOURCE_ID_BATTERY_90, RESOURCE_ID_BATTERY_100 };
+					for(int i=0;i<11;i++)
+									bat[i]=gbitmap_create_with_resource(batImages[i]);
 
+					charge=gbitmap_create_with_resource(RESOURCE_ID_CHARGE);
+					//compass_imageb=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS_BLACK);
+					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS_WHITE);
+					bton=gbitmap_create_with_resource(RESOURCE_ID_BTON);
+					btoff=gbitmap_create_with_resource(RESOURCE_ID_BTOFF);
 
+					am=gbitmap_create_with_resource(RESOURCE_ID_AM);
+					pm=gbitmap_create_with_resource(RESOURCE_ID_PM);
+					riseset=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_RISESET);
+					moon=NULL;
+					//phases=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MOON_PHASES);
+	}
 	tick_timer_service_subscribe(SECOND_UNIT, &handle_second_tick);
   battery_state_service_subscribe(&handle_battery);
   bluetooth_connection_service_subscribe(&handle_bluetooth);
