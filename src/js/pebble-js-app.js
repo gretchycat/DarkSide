@@ -41,7 +41,7 @@ function fetchWeather(latitude, longitude) {
 		{
       if(req.status == 200)
 			{
-        console.log("req: "+req.responseText);
+       // console.log("req: "+req.responseText);
         response = JSON.parse(req.responseText);
 			}
 		}
@@ -55,7 +55,7 @@ function fetchWeather(latitude, longitude) {
 		{
     	if(reqW.status == 200) 
 			{
-			  console.log("reqW: "+reqW.responseText);
+//			  console.log("reqW: "+reqW.responseText);
       	responseW = JSON.parse(reqW.responseText);
 			}
 		}
@@ -98,19 +98,19 @@ function fetchWeather(latitude, longitude) {
 		data['mn']=100;
 	}
 
-	console.log("To Pebble: ("+JSON.stringify(data).length+") "+JSON.stringify(data));
+//	console.log("To Pebble: ("+JSON.stringify(data).length+") "+JSON.stringify(data));
   Pebble.sendAppMessage(data);
 
 }
 
 function locationSuccess(pos) {
-	console.log("Have location.");
+	//console.log("Have location.");
   var coordinates = pos.coords;
   fetchWeather(coordinates.latitude, coordinates.longitude);
 }
 
 function locationError(err) {
-  console.warn('location error (' + err.code + '): ' + err.message);
+  console.warn('location error (' + 1 + '): ' + err.message);
   Pebble.sendAppMessage({
     "city":"Loc Unavailable"
   });
@@ -121,24 +121,24 @@ var locationOptions = { "timeout": 15000, "maximumAge": 60000 };
 
 Pebble.addEventListener("ready",
                         function(e) {
-                          console.log("connected: " + e.ready);
+               //           console.log("connected: " + e.ready);
                           locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
-                          console.log(e.type);
+                 //         console.log(e.type);
                         });
 
 Pebble.addEventListener("appmessage",
                         function(e) {
                           window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
-                          console.log(e.type);
-                          console.log(e.payload.temperature);
-                          console.log("message.");
+                       //   console.log(e.type);
+                     //     console.log(e.payload.temperature);
+                   //       console.log("message.");
                         });
 
 Pebble.addEventListener("webviewclosed",
                                      function(e) {
-                                     console.log("webview closed");
-                                     console.log(e.type);
-                                     console.log(e.response);
+                          //           console.log("webview closed");
+                            //         console.log(e.type);
+                              //       console.log(e.response);
                                      });
 
 

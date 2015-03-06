@@ -199,12 +199,17 @@
         "file": "images/mist.png"
       },
       {
+			  "type": "png",
+        "name": "IMAGE_MOON_PHASES",
+        "file": "images/phases.png"
+      },
+			{
         "type": "png",
         "name": "IMAGE_EXTREME",
         "file": "images/extreme.png"
       },
       {
-        "type": "png-trans",
+        "type": "png",
         "name": "IMAGE_COMPASS",
         "file": "images/compass.png"
       },
@@ -218,6 +223,61 @@
         "menuIcon": true,
         "name": "IMAGE_MENU_ICON",
         "file": "images/darkside-icon.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_0",
+        "file": "images/phase0.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_10",
+        "file": "images/phase10.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_20",
+        "file": "images/phase20.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_30",
+        "file": "images/phase30.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_40",
+        "file": "images/phase40.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_50",
+        "file": "images/phase50.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_60",
+        "file": "images/phase60.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_70",
+        "file": "images/phase70.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_80",
+        "file": "images/phase80.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_90",
+        "file": "images/phase90.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_100",
+        "file": "images/phase100.png"
       },
       {
         "type": "png",
@@ -334,6 +394,11 @@
         "name": "C_IMAGE_THUNDER",
         "file": "images/color/thunder.png"
       },
+			{
+			  "type": "png",
+        "name": "C_IMAGE_MOON_PHASES",
+        "file": "images/color/phases.png"
+      },
       {
         "type": "png",
         "name": "C_IMAGE_MIST",
@@ -345,7 +410,7 @@
         "file": "images/color/extreme.png"
       },
       {
-        "type": "png-trans",
+        "type": "png",
         "name": "C_IMAGE_COMPASS",
         "file": "images/color/compass.png"
       },
@@ -358,6 +423,61 @@
         "type": "png",
         "name": "C_IMAGE_MENU_ICON",
         "file": "images/color/darkside-icon.png"
+      },
+      {
+        "type": "png",
+        "name": "C_PHASE_0",
+        "file": "images/color/phase0.png"
+      },
+      {
+        "type": "png",
+        "name": "C_PHASE_10",
+        "file": "images/color/phase10.png"
+      },
+      {
+        "type": "png",
+        "name": "C_PHASE_20",
+        "file": "images/color/phase20.png"
+      },
+      {
+        "type": "png",
+        "name": "C_PHASE_30",
+        "file": "images/color/phase30.png"
+      },
+      {
+        "type": "png",
+        "name": "C_PHASE_40",
+        "file": "images/color/phase40.png"
+      },
+      {
+        "type": "png",
+        "name": "C_PHASE_50",
+        "file": "images/color/phase50.png"
+      },
+      {
+        "type": "png",
+        "name": "C_PHASE_60",
+        "file": "images/color/phase60.png"
+      },
+      {
+        "type": "png",
+        "name": "C_PHASE_70",
+        "file": "images/color/phase70.png"
+      },
+      {
+        "type": "png",
+        "name": "C_PHASE_80",
+        "file": "images/color/phase80.png"
+      },
+      {
+        "type": "png",
+        "name": "C_PHASE_90",
+        "file": "images/color/phase90.png"
+      },
+      {
+        "type": "png",
+        "name": "C_PHASE_100",
+        "file": "images/color/phase100.png"
       }
     ]
   },

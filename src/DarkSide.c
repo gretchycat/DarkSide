@@ -86,6 +86,7 @@ GFont *medBF=NULL;
 int tapPage=0;
 bool useFahrenheit=true;
 static GBitmap *bat[11];
+static GBitmap *phases[11];
 static GBitmap *charge=NULL;
 static GBitmap *bton=NULL;
 static GBitmap *btoff=NULL;
@@ -97,7 +98,6 @@ static GBitmap *riseset=NULL;
 static GBitmap *compass_imageb=NULL;
 static GBitmap *compass_imagew=NULL;
 static GBitmap *moon=NULL;
-//static GBitmap *phases=NULL;
 static Window *window=NULL;
 static Layer *window_layer=NULL;
 static Layer *weather_layer=NULL;
@@ -242,7 +242,7 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
 
- // APP_LOG(APP_LOG_LEVEL_DEBUG, "tuple changed %d", (int)key);
+ APP_LOG(APP_LOG_LEVEL_DEBUG, "tuple changed %d", (int)key);
   switch (key) {
     case WEATHER_ICON:
       bitmap_layer_set_bitmap(icon_layer, weather_icon[new_tuple->value->uint8]);
@@ -263,7 +263,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 					strftime(sunrise, sizeof(sunrise), sunriseTimeFormat24, tm);
 				else
 					strftime(sunrise, sizeof(sunrise), sunriseTimeFormat, tm);
-				APP_LOG(APP_LOG_LEVEL_DEBUG, "sunrise: %s", sunrise);
+//				APP_LOG(APP_LOG_LEVEL_DEBUG, "sunrise: %s", sunrise);
 				text_layer_set_text(detailSunrise, sunrise);
 			}
 			break;
@@ -275,7 +275,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 					strftime(sunset, sizeof(sunset), sunsetTimeFormat24, tm);
 				else
 					strftime(sunset, sizeof(sunset), sunsetTimeFormat, tm);
-				APP_LOG(APP_LOG_LEVEL_DEBUG, "sunset: %s", sunset);
+				//APP_LOG(APP_LOG_LEVEL_DEBUG, "sunset: %s", sunset);
 				text_layer_set_text(detailSunset, sunset);
 			}
 			break;
@@ -484,9 +484,7 @@ static void tapTimer()
 
 static void weatherTimer()
 {
-/*	char t[20];
-	sprintf(t, "wetsec: %d", wetsec);	
-	APP_LOG(APP_LOG_LEVEL_DEBUG, t);*/
+//	APP_LOG(APP_LOG_LEVEL_DEBUG, "wetsec: %d", wetsec);
 	if(wetsec<1)
 	{
 		showTapPage(1);
@@ -779,6 +777,7 @@ static void drawWeatherDetail(Window* window)
   text_layer_set_text_alignment(detailSunset, GTextAlignmentLeft);
   layer_add_child(weather_detail_layer, text_layer_get_layer(detailSunset));
 	moon_layer=bitmap_layer_create((GRect) { .origin = { 4, 35 }, .size = { ms, ms } });
+	moon=phases[moonpct/10];
 	//choose moon image from phases
 	if(moon)
 		bitmap_layer_set_bitmap(moon_layer, moon);
@@ -875,18 +874,23 @@ static void init(void)
 									RESOURCE_ID_C_BATTERY_90, RESOURCE_ID_C_BATTERY_100 };
 					for(int i=0;i<11;i++)
 									bat[i]=gbitmap_create_with_resource(batImages[i]);
+					uint32_t phaseImages[11]={
+									RESOURCE_ID_C_PHASE_0, RESOURCE_ID_C_PHASE_10, RESOURCE_ID_C_PHASE_20, 
+									RESOURCE_ID_C_PHASE_30, RESOURCE_ID_C_PHASE_40, RESOURCE_ID_C_PHASE_50, 
+									RESOURCE_ID_C_PHASE_60, RESOURCE_ID_C_PHASE_70, RESOURCE_ID_C_PHASE_80, 
+									RESOURCE_ID_C_PHASE_90, RESOURCE_ID_C_PHASE_100 };
+					for(int i=0;i<11;i++)
+									phases[i]=gbitmap_create_with_resource(phaseImages[i]);
+
 
 					charge=gbitmap_create_with_resource(RESOURCE_ID_C_CHARGE);
-					//compass_imageb=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_COMPASS_BLACK);
-					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_COMPASS_WHITE);
+					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_COMPASS);
 					bton=gbitmap_create_with_resource(RESOURCE_ID_C_BTON);
 					btoff=gbitmap_create_with_resource(RESOURCE_ID_C_BTOFF);
 
 					am=gbitmap_create_with_resource(RESOURCE_ID_C_AM);
 					pm=gbitmap_create_with_resource(RESOURCE_ID_C_PM);
 					riseset=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_RISESET);
-					moon=NULL;
-					//phases=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_MOON_PHASES);
 	}
 	else
 	{
@@ -900,18 +904,23 @@ static void init(void)
 									RESOURCE_ID_BATTERY_90, RESOURCE_ID_BATTERY_100 };
 					for(int i=0;i<11;i++)
 									bat[i]=gbitmap_create_with_resource(batImages[i]);
+					uint32_t phaseImages[11]={
+									RESOURCE_ID_PHASE_0, RESOURCE_ID_PHASE_10, RESOURCE_ID_PHASE_20, 
+									RESOURCE_ID_PHASE_30, RESOURCE_ID_PHASE_40, RESOURCE_ID_PHASE_50, 
+									RESOURCE_ID_PHASE_60, RESOURCE_ID_PHASE_70, RESOURCE_ID_PHASE_80, 
+									RESOURCE_ID_PHASE_90, RESOURCE_ID_PHASE_100 };
+					for(int i=0;i<11;i++)
+									phases[i]=gbitmap_create_with_resource(phaseImages[i]);
+
 
 					charge=gbitmap_create_with_resource(RESOURCE_ID_CHARGE);
-					//compass_imageb=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS_BLACK);
-					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS_WHITE);
+					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS);
 					bton=gbitmap_create_with_resource(RESOURCE_ID_BTON);
 					btoff=gbitmap_create_with_resource(RESOURCE_ID_BTOFF);
 
 					am=gbitmap_create_with_resource(RESOURCE_ID_AM);
 					pm=gbitmap_create_with_resource(RESOURCE_ID_PM);
 					riseset=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_RISESET);
-					moon=NULL;
-					//phases=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MOON_PHASES);
 	}
 	tick_timer_service_subscribe(SECOND_UNIT, &handle_second_tick);
   battery_state_service_subscribe(&handle_battery);
@@ -930,6 +939,7 @@ static void init(void)
   const int inbound_size = sizeof(sync_buffer);
   const int outbound_size = sizeof(sync_buffer);
   app_message_open(inbound_size, outbound_size);
+
   window_stack_push(window, animated);
 	weatherSync();
 }
@@ -940,7 +950,6 @@ static void deinit(void)
   battery_state_service_unsubscribe();
   bluetooth_connection_service_unsubscribe();
 	accel_tap_service_unsubscribe();;
-
   window_destroy(window);
 }
 
