@@ -1,1 +1,1 @@
-wscript-2.9
+wscript-3.0

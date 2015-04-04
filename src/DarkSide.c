@@ -3,7 +3,7 @@
 #define bounds layer_get_bounds(window_get_root_layer(window))
 
 #define secInDay 60*60*24
-
+#define SYNC_ERROR_TIMEOUT 60*1
 #define timeX 0
 #define timeY 1
 #define timeW 103
@@ -72,7 +72,7 @@ char str_time[10];
 char str_date[14];
 char str_sec[4];
 int tz=0;	//GMT
-int moonpct=100;
+int moonpct=-1;
 GFont *timeF=NULL;
 GFont *secF=NULL;
 GFont *dateF=NULL;
@@ -106,6 +106,8 @@ static Layer *compass_layer=NULL;
 static TextLayer *update_time_layer=NULL;
 char str_updatetime[25];
 char cityField[25];
+char zodiacField[25];
+char phaseField[25];
 static TextLayer *time_layer=NULL;
 static TextLayer *sec_layer=NULL;
 static TextLayer *date_layer=NULL;
@@ -121,8 +123,10 @@ static BitmapLayer *ampm=NULL;
 static int today=0;
 static int tapsec=0;
 bool isAM=true;
-static int wetsec=WEATHERTIMER;
+static int wetsec=0;
 static TextLayer *city_layer=NULL;
+static TextLayer *phase_layer=NULL;
+static TextLayer *zodiac_layer=NULL;
 static TextLayer *temperature_layer=NULL;
 static BitmapLayer *icon_layer=NULL;
 static BitmapLayer *riseset_layer=NULL;
@@ -140,16 +144,16 @@ static BitmapLayer *forecastIcon[FORECASTDAYS];
 char temp[FORECASTDAYS][16];
 char sunrise[20];
 char sunset[20];
-char humidity[16];
+//char humidity[16];
 char precip[16];
 char min[FORECASTDAYS][16];
 char max[FORECASTDAYS][16];
 static GBitmap *weather_icon[4];
 static AppSync sync;
-static uint8_t sync_buffer[550];
+static uint8_t sync_buffer[360];
 int hasColor;
 
-inline int convertTemp(int c)
+int convertTemp(int c)
 {
 	if(useFahrenheit)
 		return (c*9/5)+32;
@@ -158,12 +162,12 @@ inline int convertTemp(int c)
 
 enum WeatherKey {
   WEATHER_CITY = 0, WEATHER_TEMPERATURE, 
-	WEATHER_ICON,	WEATHER_MIN, WEATHER_MAX,	WEATHER_HUMIDITY,	WEATHER_PRESSURE, WEATHER_DATE,
-  WEATHER_ICON2, WEATHER_MIN2, WEATHER_MAX2, WEATHER_HUMIDITY2, WEATHER_PRESSURE2, WEATHER_DATE2,
-  WEATHER_ICON3, WEATHER_MIN3, WEATHER_MAX3, WEATHER_HUMIDITY3, WEATHER_PRESSURE3, WEATHER_DATE3,
-  WEATHER_ICON4, WEATHER_MIN4, WEATHER_MAX4, WEATHER_HUMIDITY4, WEATHER_PRESSURE4, WEATHER_DATE4,
-  WEATHER_ICON5, WEATHER_MIN5, WEATHER_MAX5, WEATHER_HUMIDITY5, WEATHER_PRESSURE5, WEATHER_DATE5,
-	WEATHER_SUNRISE, WEATHER_SUNSET, TIMEZONE, MOON
+	WEATHER_ICON,	WEATHER_MIN, WEATHER_MAX,	WEATHER_DATE,
+  WEATHER_ICON2, WEATHER_MIN2, WEATHER_MAX2, WEATHER_DATE2,
+  WEATHER_ICON3, WEATHER_MIN3, WEATHER_MAX3, WEATHER_DATE3,
+  WEATHER_ICON4, WEATHER_MIN4, WEATHER_MAX4, WEATHER_DATE4,
+  WEATHER_ICON5, WEATHER_MIN5, WEATHER_MAX5, WEATHER_DATE5,
+	WEATHER_SUNRISE, WEATHER_SUNSET, TIMEZONE, MOON, PHASE, ZODIAC
 };
 
 static const uint8_t Wicons[] = {
@@ -189,15 +193,15 @@ static const uint8_t Wmax[] = {
 	WEATHER_MAX4,
 	WEATHER_MAX5
 };
-
+/*
 static const uint8_t Whumidity[] = {
 	WEATHER_HUMIDITY,
 	WEATHER_HUMIDITY2,
 	WEATHER_HUMIDITY3,
 	WEATHER_HUMIDITY4,
 	WEATHER_HUMIDITY5
-};
-
+};*/
+/*
 static const uint8_t Wpressure[] = {
 	WEATHER_PRESSURE,
 	WEATHER_PRESSURE2,
@@ -205,7 +209,7 @@ static const uint8_t Wpressure[] = {
 	WEATHER_PRESSURE4,
 	WEATHER_PRESSURE5
 };
-
+*/
 static const uint8_t Wdate[] = {
 	WEATHER_DATE,
 	WEATHER_DATE2,
@@ -238,12 +242,14 @@ char* dayStr[7]={"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
 	strcpy(cityField, "Sync Error");
+	wetsec=SYNC_ERROR_TIMEOUT;
 }
 
-static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
-
- APP_LOG(APP_LOG_LEVEL_DEBUG, "tuple changed %d", (int)key);
-  switch (key) {
+static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) 
+{
+	//APP_LOG(APP_LOG_LEVEL_DEBUG, "tuple changed %d", (int)key);
+  switch (key) 
+	{
     case WEATHER_ICON:
       bitmap_layer_set_bitmap(icon_layer, weather_icon[new_tuple->value->uint8]);
       break;
@@ -284,10 +290,28 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 			break;
 		case MOON:
 			moonpct=(int)new_tuple->value->int32;
+			if(moonpct==-1)
+			{
+				moon=phases[wetsec%10];
+			}
+			else
+			{
+				moon=phases[moonpct/10];
+			}
+			if(moon)
+				bitmap_layer_set_bitmap(moon_layer, moon);
 			break;
-
+		case ZODIAC:
+			strcpy(zodiacField, new_tuple->value->cstring);
+      text_layer_set_text(zodiac_layer, zodiacField);
+			break;
+		case PHASE:
+			strcpy(phaseField, new_tuple->value->cstring);
+      text_layer_set_text(phase_layer, phaseField);
+ 		break;
 	}
 
+  		//APP_LOG(APP_LOG_LEVEL_DEBUG, "PHASE=(%d) '%s'", (int)key,phaseField);
 	for(int x=0;x<FORECASTDAYS;x++)
 	{	
 		if(key==Wmin[x])
@@ -353,6 +377,13 @@ static void updateTime()
 static void updateSec()
 {
   text_layer_set_text(sec_layer, str_sec);
+	if(moonpct==-1)
+	{
+		moon=phases[wetsec%11];
+		if(moon)
+			bitmap_layer_set_bitmap(moon_layer, moon);
+	}
+
 }
 
 static void updateDate()
@@ -484,8 +515,7 @@ static void tapTimer()
 
 static void weatherTimer()
 {
-//	APP_LOG(APP_LOG_LEVEL_DEBUG, "wetsec: %d", wetsec);
-	if(wetsec<1)
+	if(wetsec==0)
 	{
 		showTapPage(1);
 		wetsec=WEATHERTIMER;
@@ -664,6 +694,7 @@ static void drawWeather(Window* window)
   text_layer_set_font(city_layer, tinyF);
   text_layer_set_text_alignment(city_layer, GTextAlignmentCenter);
   layer_add_child(weather_layer, text_layer_get_layer(city_layer));
+
 	for(int x=0;x<FORECASTDAYS;x++)
 	{
 		int r=(144%FORECASTDAYS)/2;
@@ -708,43 +739,44 @@ static void weatherSync()
     TupletInteger(WEATHER_ICON, (uint8_t) 1),
 		TupletInteger(WEATHER_MIN, 0),
 		TupletInteger(WEATHER_MAX, 0),
-		TupletInteger(WEATHER_HUMIDITY, 0),
-		TupletInteger(WEATHER_PRESSURE, 800),
+		//TupletInteger(WEATHER_HUMIDITY, 0),
+		//TupletInteger(WEATHER_PRESSURE, 800),
 		TupletInteger(WEATHER_DATE,t),
     TupletInteger(WEATHER_ICON2, (uint8_t) 1),
 		TupletInteger(WEATHER_MIN2, 0),
 		TupletInteger(WEATHER_MAX2, 0),
-		TupletInteger(WEATHER_HUMIDITY2, 0),
-		TupletInteger(WEATHER_PRESSURE2, 800),
+		//TupletInteger(WEATHER_HUMIDITY2, 0),
+		//TupletInteger(WEATHER_PRESSURE2, 800),
 		TupletInteger(WEATHER_DATE2,t+(secInDay)),
     TupletInteger(WEATHER_ICON3, (uint8_t) 1),
 		TupletInteger(WEATHER_MIN3, 0),
 		TupletInteger(WEATHER_MAX3, 0),
-		TupletInteger(WEATHER_HUMIDITY3, 0),
-		TupletInteger(WEATHER_PRESSURE3, 800),
+		//TupletInteger(WEATHER_HUMIDITY3, 0),
+		//TupletInteger(WEATHER_PRESSURE3, 800),
 		TupletInteger(WEATHER_DATE3,t+(secInDay*2)),
     TupletInteger(WEATHER_ICON4, (uint8_t) 1),
 		TupletInteger(WEATHER_MIN4, 0),
 		TupletInteger(WEATHER_MAX4, 0),
-		TupletInteger(WEATHER_HUMIDITY4, 0),
-		TupletInteger(WEATHER_PRESSURE4, 800),
+		//TupletInteger(WEATHER_HUMIDITY4, 0),
+		//TupletInteger(WEATHER_PRESSURE4, 800),
 		TupletInteger(WEATHER_DATE4,t+(secInDay*3)),
     TupletInteger(WEATHER_ICON5, (uint8_t) 1),
 		TupletInteger(WEATHER_MIN5, 0),
 		TupletInteger(WEATHER_MAX5, 0),
-		TupletInteger(WEATHER_HUMIDITY5, 0),
-		TupletInteger(WEATHER_PRESSURE5, 800),
+		//TupletInteger(WEATHER_HUMIDITY5, 0),
+		//TupletInteger(WEATHER_PRESSURE5, 800),
 		TupletInteger(WEATHER_DATE5, t+(secInDay*4)),
 		TupletInteger(WEATHER_SUNRISE, 0),
 		TupletInteger(WEATHER_SUNSET, 0),
-		TupletInteger(TIMEZONE, 0),
-		TupletInteger(MOON, 100),
+//		TupletInteger(TIMEZONE, 0),
+		TupletInteger(MOON, -1),
+		TupletCString(PHASE, "-"),
+		TupletCString(ZODIAC, "-"),
 		
   };
 
   app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values), sync_tuple_changed_callback, sync_error_callback, NULL);
- //send_cmd();
-
+	//send_cmd();
 }
 
 static void drawWeatherDetail(Window* window)
@@ -777,11 +809,25 @@ static void drawWeatherDetail(Window* window)
   text_layer_set_text_alignment(detailSunset, GTextAlignmentLeft);
   layer_add_child(weather_detail_layer, text_layer_get_layer(detailSunset));
 	moon_layer=bitmap_layer_create((GRect) { .origin = { 4, 35 }, .size = { ms, ms } });
-	moon=phases[moonpct/10];
-	//choose moon image from phases
+	moon=phases[0];
 	if(moon)
 		bitmap_layer_set_bitmap(moon_layer, moon);
 	layer_add_child(weather_detail_layer, bitmap_layer_get_layer(moon_layer));	
+
+  phase_layer = text_layer_create(GRect(4+ms, 35, 144-ms-4, 16));
+  text_layer_set_text_color(phase_layer, GColorWhite);
+  text_layer_set_background_color(phase_layer, GColorClear);
+  text_layer_set_font(phase_layer, tinyF);
+  text_layer_set_text_alignment(phase_layer, GTextAlignmentCenter);
+  layer_add_child(weather_detail_layer, text_layer_get_layer(phase_layer));
+
+  zodiac_layer = text_layer_create(GRect(4+ms, 35+14, 144-ms-4, 16));
+  text_layer_set_text_color(zodiac_layer, GColorWhite);
+  text_layer_set_background_color(zodiac_layer, GColorClear);
+  text_layer_set_font(zodiac_layer, tinyF);
+  text_layer_set_text_alignment(zodiac_layer, GTextAlignmentCenter);
+  layer_add_child(weather_detail_layer, text_layer_get_layer(zodiac_layer));
+
 }
 
 static void drawCompass(Window* window)
@@ -857,7 +903,7 @@ static void init(void)
 	medBF=fonts_load_custom_font((ResHandle)resource_get_handle((uint32_t)RESOURCE_ID_FONT_UBUNTU_14_BOLD));
 	calHeadF=fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
 	calDayF=fonts_get_system_font(FONT_KEY_GOTHIC_14);
-	calNowF=fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
+	calNowF=calHeadF;
 
   window = window_create();
   window_set_background_color(window, GColorBlack);
@@ -882,12 +928,10 @@ static void init(void)
 					for(int i=0;i<11;i++)
 									phases[i]=gbitmap_create_with_resource(phaseImages[i]);
 
-
 					charge=gbitmap_create_with_resource(RESOURCE_ID_C_CHARGE);
 					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_COMPASS);
 					bton=gbitmap_create_with_resource(RESOURCE_ID_C_BTON);
 					btoff=gbitmap_create_with_resource(RESOURCE_ID_C_BTOFF);
-
 					am=gbitmap_create_with_resource(RESOURCE_ID_C_AM);
 					pm=gbitmap_create_with_resource(RESOURCE_ID_C_PM);
 					riseset=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_RISESET);
@@ -912,12 +956,10 @@ static void init(void)
 					for(int i=0;i<11;i++)
 									phases[i]=gbitmap_create_with_resource(phaseImages[i]);
 
-
 					charge=gbitmap_create_with_resource(RESOURCE_ID_CHARGE);
 					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS);
 					bton=gbitmap_create_with_resource(RESOURCE_ID_BTON);
 					btoff=gbitmap_create_with_resource(RESOURCE_ID_BTOFF);
-
 					am=gbitmap_create_with_resource(RESOURCE_ID_AM);
 					pm=gbitmap_create_with_resource(RESOURCE_ID_PM);
 					riseset=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_RISESET);
@@ -959,3 +1001,4 @@ int main(void)
   app_event_loop();
   deinit();
 }
+
