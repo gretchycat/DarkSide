@@ -91,7 +91,7 @@ static GBitmap *charge=NULL;
 static GBitmap *bton=NULL;
 static GBitmap *btoff=NULL;
 static GBitmap *back=NULL;
-static GBitmap *darkside=NULL;
+static GBitmap *splash=NULL;
 static GBitmap *am=NULL;
 static GBitmap *pm=NULL;
 static GBitmap *riseset=NULL;
@@ -117,7 +117,7 @@ static BitmapLayer *bt_layer=NULL;
 static BitmapLayer *bat_layer=NULL;
 static BitmapLayer *charge_layer=NULL;
 static BitmapLayer *back_layer=NULL;
-static BitmapLayer *darkside_layer=NULL;
+static BitmapLayer *splash_layer=NULL;
 static BitmapLayer *moon_layer=NULL;
 static BitmapLayer *ampm=NULL;
 static int today=0;
@@ -484,7 +484,7 @@ inline static void showTapPage(int pg)
 			l0=false;
 		};break;
 	}
-	layer_set_hidden(bitmap_layer_get_layer(darkside_layer), l0);
+	layer_set_hidden(bitmap_layer_get_layer(splash_layer), l0);
 	layer_set_hidden(weather_layer, l1);
 	layer_set_hidden(weather_detail_layer, l2);
 	layer_set_hidden(compass_layer, l3);
@@ -614,9 +614,9 @@ static void drawDecoration(Window *window)
 	back_layer=bitmap_layer_create(bounds);
 	bitmap_layer_set_bitmap(back_layer, back);
 	layer_add_child(window_layer, bitmap_layer_get_layer(back_layer));
-	darkside_layer=bitmap_layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
-	bitmap_layer_set_bitmap(darkside_layer, darkside);
-	layer_add_child(window_layer, bitmap_layer_get_layer(darkside_layer));
+	splash_layer=bitmap_layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
+	bitmap_layer_set_bitmap(splash_layer, splash);
+	layer_add_child(window_layer, bitmap_layer_get_layer(splash_layer));
 }
 
 static void drawCalendar(Window* window)
@@ -885,7 +885,7 @@ static void window_unload(Window *window)
 	gbitmap_destroy(bton);
 	gbitmap_destroy(btoff);
 	gbitmap_destroy(back);
-	gbitmap_destroy(darkside);
+	gbitmap_destroy(splash);
 }
 
 static void init(void) 
@@ -911,7 +911,7 @@ static void init(void)
 	if(hasColor)
 	{
 					back=gbitmap_create_with_resource(RESOURCE_ID_C_BACK);
-					darkside=gbitmap_create_with_resource(RESOURCE_ID_C_DARKSIDE);
+					splash=gbitmap_create_with_resource(RESOURCE_ID_C_SPLASH);
 
 					uint32_t batImages[11]={
 									RESOURCE_ID_C_BATTERY_0, RESOURCE_ID_C_BATTERY_10, RESOURCE_ID_C_BATTERY_20, 
@@ -939,7 +939,7 @@ static void init(void)
 	else
 	{
 					back=gbitmap_create_with_resource(RESOURCE_ID_BACK);
-					darkside=gbitmap_create_with_resource(RESOURCE_ID_DARKSIDE);
+					splash=gbitmap_create_with_resource(RESOURCE_ID_SPLASH);
 
 					uint32_t batImages[11]={
 									RESOURCE_ID_BATTERY_0, RESOURCE_ID_BATTERY_10, RESOURCE_ID_BATTERY_20, 

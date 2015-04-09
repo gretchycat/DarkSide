@@ -72,7 +72,7 @@
       },
       {
         "type": "png",
-        "name": "DARKSIDE",
+        "name": "SPLASH",
         "file": "images/darkside.png"
       },
       {
@@ -273,7 +273,7 @@
       },
       {
         "type": "png",
-        "name": "C_DARKSIDE",
+        "name": "C_SPLASH",
         "file": "images/color/darkside.png"
       },
       {
