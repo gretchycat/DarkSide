@@ -3,8 +3,8 @@
   "shortName": "StarMan",
   "longName": "StarMan",
   "companyName": "Gretchen Maculo",
-  "versionCode": 200,
-  "versionLabel": "2.0",
+  "versionCode": 210,
+  "versionLabel": "2.1",
   "watchapp": {
     "watchface": true
   },
@@ -204,6 +204,11 @@
         "type": "png",
         "name": "IMAGE_COMPASS",
         "file": "images/StarMan/compass.png"
+      },
+			{
+        "type": "png",
+        "name": "IMAGE_COMPASS_BACK",
+        "file": "images/StarMan/compass_back.png"
       },
       {
         "type": "png",

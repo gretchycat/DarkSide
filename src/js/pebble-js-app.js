@@ -17,6 +17,11 @@ var FAZ;
 var LAT;
 var LON;
 var SGN;*/
+var n28 = parseInt( "28" );
+var n30 = parseInt( "30" );
+var n31 = parseInt( "31" );
+var dim = new Array( n31, n28, n31, n30, n31, n30, n31, n31, n30, n31, n30, n31 );
+
 
 function initialize()
 {
@@ -48,11 +53,6 @@ function calculate()
     LON = round2( LO );
     SGN = Zodiac;*/
 }
-
-var n28 = parseInt( "28" );
-var n30 = parseInt( "30" );
-var n31 = parseInt( "31" );
-var dim = new Array( n31, n28, n31, n30, n31, n30, n31, n31, n30, n31, n30, n31 );
 
 function isdayofmonth( y, m, d )
 {
@@ -277,7 +277,8 @@ function allclear()
     DAY=0;
 }
 
-function iconFromWeatherId(weatherId) {
+function iconFromWeatherId(weatherId) 
+{
   if (weatherId < 300) {
 		return 4; //thunder
 	} else if (weatherId < 600) {
@@ -301,7 +302,8 @@ function iconFromWeatherId(weatherId) {
 	}
 }
 
-function fetchWeather(latitude, longitude) {
+function fetchWeather(latitude, longitude) 
+{
 	initialize();
 	calculate();
   var response;
@@ -311,6 +313,10 @@ function fetchWeather(latitude, longitude) {
   var reqW = new XMLHttpRequest();
   var reqH = new XMLHttpRequest();
 	var data={ "ct":"None" };
+	data["mn"]=MOONPCT;
+	data["ps"]=Phase;
+	data["zd"]=Zodiac;
+
 	var offset = new Date().getTimezoneOffset()*60;
 	//data['tz']=-(offset/60/60);
 	var url="http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=5&mode=json";
@@ -326,6 +332,23 @@ function fetchWeather(latitude, longitude) {
 			{
         console.log("req: "+req.responseText);
         response = JSON.parse(req.responseText);
+				if (response)
+				{
+								data["ct"]=response.city.name;
+								for(var i=0;i<response.list.length;i++)
+								{
+												var w = response.list[i];
+												data["ic"+i]=iconFromWeatherId(w.weather[0].id);
+												data["mn"+i]=Math.round(w.temp.min - 273.15);
+												data["mx"+i]=Math.round(w.temp.max - 273.15);
+												//		data["hm"+i]=w.humidity;
+												//		data["pr"+i]=w.pressure;
+												data["dt"+i]=w.dt-offset;
+								}
+				}
+//				console.log("1:To Pebble: ("+JSON.stringify(data).length+") "+JSON.stringify(data));
+//				if(data["ss"]!="")
+//					Pebble.sendAppMessage(data);
 			}
 		}
 	}
@@ -343,64 +366,33 @@ function fetchWeather(latitude, longitude) {
 			{
 			  console.log("reqW: "+reqW.responseText);
       	responseW = JSON.parse(reqW.responseText);
+				if(responseW)
+				{
+								data["tm"]=Math.round(responseW.main.temp - 273.15);
+								data["sr"]=responseW.sys.sunrise-offset;
+								data["ss"]=responseW.sys.sunset-offset;
+				}
+				console.log("2:To Pebble: ("+JSON.stringify(data).length+") "+JSON.stringify(data));
+				if(data["ct"]!="None")
+						Pebble.sendAppMessage(data);
 			}
 		}
 	}
 	reqW.send(null);
-/*	var now="2015-04-02";
-	url="http://api.met.no/weatherapi/sunrise/1.0/?lat=" + latitude + ";lon=" + longitude + ";date="+now;
-	console.log("Connecting to: "+url);
-	reqH.open('GET', url, false);
-	reqH.onload = function(e) 
-	{
-		console.log("reqH.readystate: "+reqH.readyState);
-  	if (reqH.readyState == 4) 
-		{
-			console.log("reqH.status: "+reqH.status);
-    	if(reqH.status == 200) 
-			{
-				console.log("reqH: "+reqH.responseText);
-        responseH = JSON.parse(reqH.responseText);
-			}
-		}
-	}
-	reqH.send(null);
-*/
-	data["mn"]=MOONPCT;
-	data["ps"]=Phase;
-	data["zd"]=Zodiac;
-  if (response && response.list && response.list.length > 0)
-	{
-		data["ct"]=response.city.name;
-		for(var i=0;i<response.list.length;i++)
-		{
-      var w = response.list[i];
-			data["ic"+i]=iconFromWeatherId(w.weather[0].id);
-			data["mn"+i]=Math.round(w.temp.min - 273.15);
-			data["mx"+i]=Math.round(w.temp.max - 273.15);
-	//		data["hm"+i]=w.humidity;
-	//		data["pr"+i]=w.pressure;
-			data["dt"+i]=w.dt-offset;
-		}
-	}
-	if(responseW)
-	{
-		data["tm"]=Math.round(responseW.main.temp - 273.15);
-		data["sr"]=responseW.sys.sunrise-offset;
-		data["ss"]=responseW.sys.sunset-offset;
-	}
-	console.log("To Pebble: ("+JSON.stringify(data).length+") "+JSON.stringify(data));
-  Pebble.sendAppMessage(data);
+//				console.log("To Pebble: ("+JSON.stringify(data).length+") "+JSON.stringify(data));
+//				Pebble.sendAppMessage(data);
 }
 
-function locationSuccess(pos) {
+function locationSuccess(pos) 
+{
 	console.log("Have location.");
   var coordinates = pos.coords;
   fetchWeather(coordinates.latitude, coordinates.longitude);
 	window.navigator.geolocation.clearWatch(locationWatcher);
 }
 
-function locationError(err) {
+function locationError(err) 
+{
   console.warn('location error: ');
 //  Pebble.sendAppMessage({"ct":"Loc Unavailable"});
 }

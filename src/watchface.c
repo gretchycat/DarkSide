@@ -1,7 +1,6 @@
 #include <pebble.h>
 
 #define bounds layer_get_bounds(window_get_root_layer(window))
-
 #define secInDay 60*60*24
 #define SYNC_ERROR_TIMEOUT 60*1
 #define timeX 0
@@ -11,7 +10,6 @@
 #define timeA GTextAlignmentCenter
 #define timeFormat "%l:%M"
 #define timeFormat24 "%H:%M"
-
 #define secX (timeW+timeX)
 #define secY (6+timeY)
 #define secW (144-secX)
@@ -33,7 +31,6 @@
 #define sunriseTimeFormat24 "%H:%M:%S"// %m/%d/%Y"
 #define sunsetTimeFormat "%l:%M:%S %p"// %m/%d/%Y"
 #define sunsetTimeFormat24 "%H:%M:%S"// %m/%d/%Y"
-
 
 #define batW 16
 #define batH 8
@@ -83,10 +80,24 @@ GFont *tinyF=NULL;
 GFont *medF=NULL;
 GFont *medBF=NULL;
 
+#ifdef PBL_COLOR
+	uint32_t phaseImages[11]={
+									RESOURCE_ID_C_PHASE_0, RESOURCE_ID_C_PHASE_10, RESOURCE_ID_C_PHASE_20, 
+									RESOURCE_ID_C_PHASE_30, RESOURCE_ID_C_PHASE_40, RESOURCE_ID_C_PHASE_50, 
+									RESOURCE_ID_C_PHASE_60, RESOURCE_ID_C_PHASE_70, RESOURCE_ID_C_PHASE_80, 
+									RESOURCE_ID_C_PHASE_90, RESOURCE_ID_C_PHASE_100 };
+#else
+	uint32_t phaseImages[11]={
+									RESOURCE_ID_PHASE_0, RESOURCE_ID_PHASE_10, RESOURCE_ID_PHASE_20, 
+									RESOURCE_ID_PHASE_30, RESOURCE_ID_PHASE_40, RESOURCE_ID_PHASE_50, 
+									RESOURCE_ID_PHASE_60, RESOURCE_ID_PHASE_70, RESOURCE_ID_PHASE_80, 
+									RESOURCE_ID_PHASE_90, RESOURCE_ID_PHASE_100 };
+
+
+#endif
 int tapPage=0;
 bool useFahrenheit=true;
 static GBitmap *bat[11];
-static GBitmap *phases[11];
 static GBitmap *charge=NULL;
 static GBitmap *bton=NULL;
 static GBitmap *btoff=NULL;
@@ -130,7 +141,7 @@ static TextLayer *zodiac_layer=NULL;
 static TextLayer *temperature_layer=NULL;
 static BitmapLayer *icon_layer=NULL;
 static BitmapLayer *riseset_layer=NULL;
-static RotBitmapLayer *compass_image_layerb=NULL;
+static BitmapLayer *compass_image_layerb=NULL;
 static RotBitmapLayer *compass_image_layerw=NULL;
 static TextLayer *tempMin[FORECASTDAYS];
 static TextLayer *tempMax[FORECASTDAYS];
@@ -150,7 +161,7 @@ char min[FORECASTDAYS][16];
 char max[FORECASTDAYS][16];
 static GBitmap *weather_icon[4];
 static AppSync sync;
-static uint8_t sync_buffer[360];
+static uint8_t sync_buffer[320];
 int hasColor;
 
 int convertTemp(int c)
@@ -226,7 +237,17 @@ static const uint8_t Wicon[] = {
 	WEATHER_ICON5
 };
 
-
+#ifdef PBL_COLOR
+static const uint32_t WEATHER_ICONS[] = {
+  RESOURCE_ID_C_IMAGE_SUN, //0
+  RESOURCE_ID_C_IMAGE_CLOUD, //1
+  RESOURCE_ID_C_IMAGE_RAIN, //2
+  RESOURCE_ID_C_IMAGE_SNOW, //3
+	RESOURCE_ID_C_IMAGE_THUNDER, //4
+	RESOURCE_ID_C_IMAGE_MIST, //5
+	RESOURCE_ID_C_IMAGE_EXTREME //6
+};
+#else
 static const uint32_t WEATHER_ICONS[] = {
   RESOURCE_ID_IMAGE_SUN, //0
   RESOURCE_ID_IMAGE_CLOUD, //1
@@ -236,6 +257,7 @@ static const uint32_t WEATHER_ICONS[] = {
 	RESOURCE_ID_IMAGE_MIST, //5
 	RESOURCE_ID_IMAGE_EXTREME //6
 };
+#endif
 
 char* dayStr[7]={"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 
@@ -269,7 +291,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 					strftime(sunrise, sizeof(sunrise), sunriseTimeFormat24, tm);
 				else
 					strftime(sunrise, sizeof(sunrise), sunriseTimeFormat, tm);
-//				APP_LOG(APP_LOG_LEVEL_DEBUG, "sunrise: %s", sunrise);
+				APP_LOG(APP_LOG_LEVEL_DEBUG, "sunrise: %s (%d)", sunrise, (int)t);
 				text_layer_set_text(detailSunrise, sunrise);
 			}
 			break;
@@ -281,7 +303,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 					strftime(sunset, sizeof(sunset), sunsetTimeFormat24, tm);
 				else
 					strftime(sunset, sizeof(sunset), sunsetTimeFormat, tm);
-				//APP_LOG(APP_LOG_LEVEL_DEBUG, "sunset: %s", sunset);
+				APP_LOG(APP_LOG_LEVEL_DEBUG, "sunset: %s (%d)", sunset, (int)t);
 				text_layer_set_text(detailSunset, sunset);
 			}
 			break;
@@ -292,11 +314,15 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 			moonpct=(int)new_tuple->value->int32;
 			if(moonpct==-1)
 			{
-				moon=phases[wetsec%10];
+				if(moon)
+					gbitmap_destroy(moon);
+				moon=gbitmap_create_with_resource(phaseImages[wetsec%10]);
 			}
 			else
 			{
-				moon=phases[moonpct/10];
+				if(moon)
+					gbitmap_destroy(moon);
+				moon=gbitmap_create_with_resource(phaseImages[moonpct/10]);
 			}
 			if(moon)
 				bitmap_layer_set_bitmap(moon_layer, moon);
@@ -379,7 +405,6 @@ static void updateSec()
   text_layer_set_text(sec_layer, str_sec);
 	if(moonpct==-1)
 	{
-		moon=phases[wetsec%11];
 		if(moon)
 			bitmap_layer_set_bitmap(moon_layer, moon);
 	}
@@ -426,7 +451,6 @@ static void drawDate(Window* window)
   layer_add_child(window_layer, text_layer_get_layer(date_layer));
 }
 
-
 static void handle_battery(BatteryChargeState charge_state)
 {
 	int pct=charge_state.charge_percent/10;
@@ -438,8 +462,6 @@ static void handle_compass(CompassHeadingData d)
 {
 	if(tapPage==3)
 	{
-		if(compass_image_layerb)
-			rot_bitmap_layer_set_angle(compass_image_layerb, d.magnetic_heading);	
 		rot_bitmap_layer_set_angle(compass_image_layerw, d.magnetic_heading);	
 	}
 }
@@ -791,7 +813,10 @@ static void drawWeatherDetail(Window* window)
   layer_add_child(weather_detail_layer, text_layer_get_layer(update_time_layer));	
 
 	riseset_layer=bitmap_layer_create((GRect) { .origin = { 144/2-29-15, 12 }, .size = { 29, 20 } });
-	bitmap_layer_set_compositing_mode(riseset_layer, GCompOpOr);
+	if(hasColor)
+		bitmap_layer_set_compositing_mode(riseset_layer, GCompOpSet);
+	else
+		bitmap_layer_set_compositing_mode(riseset_layer, GCompOpOr);
 	bitmap_layer_set_bitmap(riseset_layer, riseset);
 	layer_add_child(weather_detail_layer, bitmap_layer_get_layer(riseset_layer));	
 
@@ -809,7 +834,6 @@ static void drawWeatherDetail(Window* window)
   text_layer_set_text_alignment(detailSunset, GTextAlignmentLeft);
   layer_add_child(weather_detail_layer, text_layer_get_layer(detailSunset));
 	moon_layer=bitmap_layer_create((GRect) { .origin = { 4, 35 }, .size = { ms, ms } });
-	moon=phases[0];
 	if(moon)
 		bitmap_layer_set_bitmap(moon_layer, moon);
 	layer_add_child(weather_detail_layer, bitmap_layer_get_layer(moon_layer));	
@@ -839,14 +863,22 @@ static void drawCompass(Window* window)
 	compass_layer=layer_create((GRect) { .origin = { compassX, compassY }, .size = { compassW, compassH } });
 	layer_add_child(window_layer, compass_layer);
 	compass_image_layerw=rot_bitmap_layer_create(compass_imagew);
-	rot_bitmap_set_compositing_mode(compass_image_layerw, GCompOpOr);
-	layer_add_child(compass_layer, (Layer*)(compass_image_layerw));
-	if(compass_imageb)
+	compass_image_layerb=bitmap_layer_create((GRect) { .origin = { 0, 0 }, .size = { compassW, compassH } });
+	if(hasColor)
 	{
-		compass_image_layerb=rot_bitmap_layer_create(compass_imageb);
-		rot_bitmap_set_compositing_mode(compass_image_layerb, GCompOpClear);
-		layer_add_child(compass_layer, (Layer*)(compass_image_layerb));
+		rot_bitmap_set_compositing_mode(compass_image_layerw, GCompOpSet);
 	}
+	else
+	{
+		if(compass_imageb)
+		{
+			bitmap_layer_set_compositing_mode((BitmapLayer*)(compass_image_layerb), GCompOpAnd);
+			bitmap_layer_set_bitmap(compass_image_layerb, compass_imageb);
+			layer_add_child(compass_layer, (Layer*)(compass_image_layerb));
+		}
+		rot_bitmap_set_compositing_mode(compass_image_layerw, GCompOpOr);
+	}
+	layer_add_child(compass_layer, (Layer*)(compass_image_layerw));
 }
 
 static void window_load(Window *window) 
@@ -900,9 +932,9 @@ static void init(void)
 	dateF=fonts_load_custom_font((ResHandle)resource_get_handle((uint32_t)RESOURCE_ID_FONT_BEYOND_16));
 	tinyF=fonts_load_custom_font((ResHandle)resource_get_handle((uint32_t)RESOURCE_ID_FONT_UBUNTU_10));
 	medF=fonts_load_custom_font((ResHandle)resource_get_handle((uint32_t)RESOURCE_ID_FONT_UBUNTU_14));
-	medBF=fonts_load_custom_font((ResHandle)resource_get_handle((uint32_t)RESOURCE_ID_FONT_UBUNTU_14_BOLD));
-	calHeadF=fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
+	medBF=medF;//fonts_load_custom_font((ResHandle)resource_get_handle((uint32_t)RESOURCE_ID_FONT_UBUNTU_14_BOLD));
 	calDayF=fonts_get_system_font(FONT_KEY_GOTHIC_14);
+	calHeadF=calDayF;//fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
 	calNowF=calHeadF;
 
   window = window_create();
@@ -920,13 +952,6 @@ static void init(void)
 									RESOURCE_ID_C_BATTERY_90, RESOURCE_ID_C_BATTERY_100 };
 					for(int i=0;i<11;i++)
 									bat[i]=gbitmap_create_with_resource(batImages[i]);
-					uint32_t phaseImages[11]={
-									RESOURCE_ID_C_PHASE_0, RESOURCE_ID_C_PHASE_10, RESOURCE_ID_C_PHASE_20, 
-									RESOURCE_ID_C_PHASE_30, RESOURCE_ID_C_PHASE_40, RESOURCE_ID_C_PHASE_50, 
-									RESOURCE_ID_C_PHASE_60, RESOURCE_ID_C_PHASE_70, RESOURCE_ID_C_PHASE_80, 
-									RESOURCE_ID_C_PHASE_90, RESOURCE_ID_C_PHASE_100 };
-					for(int i=0;i<11;i++)
-									phases[i]=gbitmap_create_with_resource(phaseImages[i]);
 
 					charge=gbitmap_create_with_resource(RESOURCE_ID_C_CHARGE);
 					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_COMPASS);
@@ -948,15 +973,8 @@ static void init(void)
 									RESOURCE_ID_BATTERY_90, RESOURCE_ID_BATTERY_100 };
 					for(int i=0;i<11;i++)
 									bat[i]=gbitmap_create_with_resource(batImages[i]);
-					uint32_t phaseImages[11]={
-									RESOURCE_ID_PHASE_0, RESOURCE_ID_PHASE_10, RESOURCE_ID_PHASE_20, 
-									RESOURCE_ID_PHASE_30, RESOURCE_ID_PHASE_40, RESOURCE_ID_PHASE_50, 
-									RESOURCE_ID_PHASE_60, RESOURCE_ID_PHASE_70, RESOURCE_ID_PHASE_80, 
-									RESOURCE_ID_PHASE_90, RESOURCE_ID_PHASE_100 };
-					for(int i=0;i<11;i++)
-									phases[i]=gbitmap_create_with_resource(phaseImages[i]);
-
 					charge=gbitmap_create_with_resource(RESOURCE_ID_CHARGE);
+					compass_imageb=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS_BACK);
 					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS);
 					bton=gbitmap_create_with_resource(RESOURCE_ID_BTON);
 					btoff=gbitmap_create_with_resource(RESOURCE_ID_BTOFF);

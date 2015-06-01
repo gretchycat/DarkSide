@@ -1,10 +1,10 @@
 {
   "uuid": "971f48bf-f215-454e-8cad-8b6949c62f1e",
-  "shortName": "Marylin",
-  "longName": "Marylin",
+  "shortName": "Marilyn",
+  "longName": "Marilyn",
   "companyName": "Gretchen Maculo",
-  "versionCode": 200,
-  "versionLabel": "2.0",
+  "versionCode": 210,
+  "versionLabel": "2.1",
   "watchapp": {
     "watchface": true
   },
@@ -204,6 +204,11 @@
         "type": "png",
         "name": "IMAGE_COMPASS",
         "file": "images/Marylin/compass.png"
+      },
+			{
+        "type": "png",
+        "name": "IMAGE_COMPASS_BACK",
+        "file": "images/Marylin/compass_back.png"
       },
       {
         "type": "png",
