@@ -662,6 +662,12 @@ static void drawCalendar(Window* window)
 			calendar[day][row]=text_layer_create((GRect) { .origin = { x, y }, .size = { calDayW, calDayH } });
 			GColor fg=GColorBlack;
 			GColor bg=GColorWhite;
+			GColor hfg=GColorWhite;
+#ifdef PBL_COLOR
+			GColor hbg=GColorDarkCandyAppleRed;
+#else
+			GColor hbg=GColorBlack;
+#endif
 			if(!row)
 			{
 				fg=GColorWhite;
@@ -681,9 +687,15 @@ static void drawCalendar(Window* window)
 				struct tm *time=localtime(&t); 
 				int dayField=time->tm_mday;
 				if(dayField==today)
+				{
 					text_layer_set_font(calendar[day][row], calNowF);
+					text_layer_set_text_color(calendar[day][row], hfg);
+					text_layer_set_background_color(calendar[day][row], hbg);
+				}
 				else
+				{
 					text_layer_set_font(calendar[day][row], calDayF);
+				}
 				time=localtime(&t);
 				strftime(calDay[day][row-1], 3, "%e", time);
 				text_layer_set_text(calendar[day][row], calDay[day][row-1]);
