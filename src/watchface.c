@@ -79,22 +79,13 @@ GFont *calNowF=NULL;
 GFont *tinyF=NULL;
 GFont *medF=NULL;
 GFont *medBF=NULL;
-
-#ifdef PBL_COLOR
-	uint32_t phaseImages[11]={
-									RESOURCE_ID_C_PHASE_0, RESOURCE_ID_C_PHASE_10, RESOURCE_ID_C_PHASE_20, 
-									RESOURCE_ID_C_PHASE_30, RESOURCE_ID_C_PHASE_40, RESOURCE_ID_C_PHASE_50, 
-									RESOURCE_ID_C_PHASE_60, RESOURCE_ID_C_PHASE_70, RESOURCE_ID_C_PHASE_80, 
-									RESOURCE_ID_C_PHASE_90, RESOURCE_ID_C_PHASE_100 };
-#else
-	uint32_t phaseImages[11]={
+uint32_t phaseImages[11]={
 									RESOURCE_ID_PHASE_0, RESOURCE_ID_PHASE_10, RESOURCE_ID_PHASE_20, 
 									RESOURCE_ID_PHASE_30, RESOURCE_ID_PHASE_40, RESOURCE_ID_PHASE_50, 
 									RESOURCE_ID_PHASE_60, RESOURCE_ID_PHASE_70, RESOURCE_ID_PHASE_80, 
 									RESOURCE_ID_PHASE_90, RESOURCE_ID_PHASE_100 };
 
 
-#endif
 int tapPage=0;
 bool useFahrenheit=true;
 static GBitmap *bat[11];
@@ -236,18 +227,6 @@ static const uint8_t Wicon[] = {
 	WEATHER_ICON4,
 	WEATHER_ICON5
 };
-
-#ifdef PBL_COLOR
-static const uint32_t WEATHER_ICONS[] = {
-  RESOURCE_ID_C_IMAGE_SUN, //0
-  RESOURCE_ID_C_IMAGE_CLOUD, //1
-  RESOURCE_ID_C_IMAGE_RAIN, //2
-  RESOURCE_ID_C_IMAGE_SNOW, //3
-	RESOURCE_ID_C_IMAGE_THUNDER, //4
-	RESOURCE_ID_C_IMAGE_MIST, //5
-	RESOURCE_ID_C_IMAGE_EXTREME //6
-};
-#else
 static const uint32_t WEATHER_ICONS[] = {
   RESOURCE_ID_IMAGE_SUN, //0
   RESOURCE_ID_IMAGE_CLOUD, //1
@@ -257,7 +236,6 @@ static const uint32_t WEATHER_ICONS[] = {
 	RESOURCE_ID_IMAGE_MIST, //5
 	RESOURCE_ID_IMAGE_EXTREME //6
 };
-#endif
 
 char* dayStr[7]={"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 
@@ -952,28 +930,6 @@ static void init(void)
   window = window_create();
   window_set_background_color(window, GColorBlack);
 	window_layer=window_get_root_layer(window);
-	if(hasColor)
-	{
-					back=gbitmap_create_with_resource(RESOURCE_ID_C_BACK);
-					splash=gbitmap_create_with_resource(RESOURCE_ID_C_SPLASH);
-
-					uint32_t batImages[11]={
-									RESOURCE_ID_C_BATTERY_0, RESOURCE_ID_C_BATTERY_10, RESOURCE_ID_C_BATTERY_20, 
-									RESOURCE_ID_C_BATTERY_30, RESOURCE_ID_C_BATTERY_40, RESOURCE_ID_C_BATTERY_50, 
-									RESOURCE_ID_C_BATTERY_60, RESOURCE_ID_C_BATTERY_70, RESOURCE_ID_C_BATTERY_80, 
-									RESOURCE_ID_C_BATTERY_90, RESOURCE_ID_C_BATTERY_100 };
-					for(int i=0;i<11;i++)
-									bat[i]=gbitmap_create_with_resource(batImages[i]);
-
-					charge=gbitmap_create_with_resource(RESOURCE_ID_C_CHARGE);
-					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_COMPASS);
-					bton=gbitmap_create_with_resource(RESOURCE_ID_C_BTON);
-					btoff=gbitmap_create_with_resource(RESOURCE_ID_C_BTOFF);
-					am=gbitmap_create_with_resource(RESOURCE_ID_C_AM);
-					pm=gbitmap_create_with_resource(RESOURCE_ID_C_PM);
-					riseset=gbitmap_create_with_resource(RESOURCE_ID_C_IMAGE_RISESET);
-	}
-	else
 	{
 					back=gbitmap_create_with_resource(RESOURCE_ID_BACK);
 					splash=gbitmap_create_with_resource(RESOURCE_ID_SPLASH);
