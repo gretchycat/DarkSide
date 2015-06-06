@@ -3,8 +3,8 @@
   "shortName": "Cozumel",
   "longName": "Cozumel",
   "companyName": "Gretchen Maculo",
-  "versionCode": 210,
-  "versionLabel": "2.1",
+  "versionCode": 220,
+  "versionLabel": "2.2",
   "watchapp": {
     "watchface": true
   },
