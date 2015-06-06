@@ -152,7 +152,7 @@ char min[FORECASTDAYS][16];
 char max[FORECASTDAYS][16];
 static GBitmap *weather_icon[4];
 static AppSync sync;
-static uint8_t sync_buffer[320];
+static uint8_t sync_buffer[330];
 int hasColor;
 
 int convertTemp(int c)
