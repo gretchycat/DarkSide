@@ -3,8 +3,8 @@
   "shortName": "Jupiter",
   "longName": "Jupiter",
   "companyName": "Gretchen Maculo",
-  "versionCode": 230,
-  "versionLabel": "2.3",
+  "versionCode": 240,
+  "versionLabel": "2.4",
   "watchapp": {
     "watchface": true
   },
