@@ -550,16 +550,34 @@ static void updateCalendar()
 	{
 		for(int day=0;day<7;day++)
 		{
-			GColor fg=GColorBlack;
-			GColor bg=GColorWhite;
-			text_layer_set_text_color(calendar[day][row], fg);
-			text_layer_set_background_color(calendar[day][row], bg);
 			struct tm *time=localtime(&t); 
 			int dayField=time->tm_mday;
+			GColor fg=GColorBlack;
+			GColor bg=GColorWhite;
+			GColor hfg=GColorWhite;
+#ifdef PBL_COLOR
+			GColor hbg=GColorDarkCandyAppleRed;
+#else
+			GColor hbg=GColorBlack;
+#endif
+			if(!row)
+			{
+				fg=GColorWhite;
+				bg=GColorBlack;
+			}
 			if(dayField==today)
+			{
 				text_layer_set_font(calendar[day][row], calNowF);
+				text_layer_set_text_color(calendar[day][row], hfg);
+				text_layer_set_background_color(calendar[day][row], hbg);
+			}
 			else
+			{
 				text_layer_set_font(calendar[day][row], calDayF);
+				text_layer_set_text_color(calendar[day][row], fg);
+				text_layer_set_background_color(calendar[day][row], bg);
+			}
+	
 			time=localtime(&t);
 			strftime(calDay[day][row-1], 3, "%e", time);
 			text_layer_set_text(calendar[day][row], calDay[day][row-1]);
@@ -673,6 +691,8 @@ static void drawCalendar(Window* window)
 				else
 				{
 					text_layer_set_font(calendar[day][row], calDayF);
+					text_layer_set_text_color(calendar[day][row], fg);
+					text_layer_set_background_color(calendar[day][row], bg);
 				}
 				time=localtime(&t);
 				strftime(calDay[day][row-1], 3, "%e", time);
