@@ -1,1 +1,286 @@
-appinfo.Jupiter.json
+{
+  "uuid": "971f48bf-f215-454e-8cad-8b6949c62f23",
+  "shortName": "Jupiter",
+  "longName": "Jupiter",
+  "companyName": "Gretchen Maculo",
+  "versionCode": 230,
+  "versionLabel": "2.3",
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {
+    "ct": 0,
+    "tm": 1,
+    "ic0": 2,
+    "mn0": 3,
+    "mx0": 4,
+    "dt0": 5,
+    "ic1": 6,
+    "mn1": 7,
+    "mx1": 8,
+    "dt1": 9,
+    "ic2": 10,
+    "mn2": 11,
+    "mx2": 12,
+    "dt2": 13,
+    "ic3": 14,
+    "mn3": 15,
+    "mx3": 16,
+    "dt3": 17,
+    "ic4": 18,
+    "mn4": 19,
+    "mx4": 20,
+    "dt4": 21,
+    "sr": 22,
+    "ss": 23,
+    "tz": 24,
+    "mn": 25,
+		"ps": 26,
+		"zd": 27
+  },
+  "resources": {
+    "media": [
+      {
+        "type": "font",
+        "name": "FONT_BEYOND_30_BOLD",
+        "file": "fonts/Jupiter/BeyondTheLightedStage.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_BEYOND_24_BOLD",
+        "file": "fonts/Jupiter/BeyondTheLightedStage.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_BEYOND_16",
+        "file": "fonts/Jupiter/BeyondTheLightedStage.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_UBUNTU_10",
+        "file": "fonts/Jupiter/Ubuntu-M.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_UBUNTU_14",
+        "file": "fonts/Jupiter/Ubuntu-M.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_UBUNTU_14_BOLD",
+        "file": "fonts/Jupiter/Ubuntu-M.ttf"
+      },
+      {
+        "type": "png",
+        "name": "SPLASH",
+        "file": "images/Jupiter/darkside.png"
+      },
+      {
+        "type": "png",
+        "name": "AM",
+        "file": "images/Jupiter/am.png"
+      },
+      {
+        "type": "png",
+        "name": "PM",
+        "file": "images/Jupiter/pm.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_0",
+        "file": "images/Jupiter/b000.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_10",
+        "file": "images/Jupiter/b010.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_20",
+        "file": "images/Jupiter/b020.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_30",
+        "file": "images/Jupiter/b030.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_40",
+        "file": "images/Jupiter/b040.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_50",
+        "file": "images/Jupiter/b050.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_60",
+        "file": "images/Jupiter/b060.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_70",
+        "file": "images/Jupiter/b070.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_80",
+        "file": "images/Jupiter/b080.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_90",
+        "file": "images/Jupiter/b090.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_100",
+        "file": "images/Jupiter/b100.png"
+      },
+      {
+        "type": "png",
+        "name": "CHARGE",
+        "file": "images/Jupiter/charge.png"
+      },
+      {
+        "type": "png",
+        "name": "BTON",
+        "file": "images/Jupiter/bton.png"
+      },
+      {
+        "type": "png",
+        "name": "BTOFF",
+        "file": "images/Jupiter/btoff.png"
+      },
+      {
+        "type": "png",
+        "name": "BACK",
+        "file": "images/Jupiter/back.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_SUN",
+        "file": "images/Jupiter/sun.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_RAIN",
+        "file": "images/Jupiter/rain.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_CLOUD",
+        "file": "images/Jupiter/cloud.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_SNOW",
+        "file": "images/Jupiter/snow.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_THUNDER",
+        "file": "images/Jupiter/thunder.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_MIST",
+        "file": "images/Jupiter/mist.png"
+      },
+      {
+			  "type": "png",
+        "name": "IMAGE_MOON_PHASES",
+        "file": "images/Jupiter/phases.png"
+      },
+			{
+        "type": "png",
+        "name": "IMAGE_EXTREME",
+        "file": "images/Jupiter/extreme.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_COMPASS",
+        "file": "images/Jupiter/compass.png"
+      },
+			{
+        "type": "png",
+        "name": "IMAGE_COMPASS_BACK",
+        "file": "images/Jupiter/compass_back.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_RISESET",
+        "file": "images/Jupiter/sunriseset.png"
+      },
+      {
+        "type": "png",
+        "menuIcon": true,
+        "name": "IMAGE_MENU_ICON",
+        "file": "images/Jupiter/darkside-icon.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_0",
+        "file": "images/Jupiter/phase0.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_10",
+        "file": "images/Jupiter/phase10.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_20",
+        "file": "images/Jupiter/phase20.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_30",
+        "file": "images/Jupiter/phase30.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_40",
+        "file": "images/Jupiter/phase40.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_50",
+        "file": "images/Jupiter/phase50.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_60",
+        "file": "images/Jupiter/phase60.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_70",
+        "file": "images/Jupiter/phase70.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_80",
+        "file": "images/Jupiter/phase80.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_90",
+        "file": "images/Jupiter/phase90.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_100",
+        "file": "images/Jupiter/phase100.png"
+      }
+    ]
+  },
+  "targetPlatforms": [
+    "aplite",
+    "basalt"
+  ],
+  "sdkVersion": "3"
+}

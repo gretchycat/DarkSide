@@ -3,8 +3,8 @@
   "shortName": "TheEndlessRiver",
   "longName": "TheEndlessRiver",
   "companyName": "Gretchen Maculo",
-  "versionCode": 220,
-  "versionLabel": "2.2",
+  "versionCode": 230,
+  "versionLabel": "2.3",
   "watchapp": {
     "watchface": true
   },
