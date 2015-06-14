@@ -17,11 +17,36 @@ var FAZ;
 var LAT;
 var LON;
 var SGN;*/
+var TEMPSCALE=0;
+var SHOWSEC=1;
 var n28 = parseInt( "28" );
 var n30 = parseInt( "30" );
 var n31 = parseInt( "31" );
 var dim = new Array( n31, n28, n31, n30, n31, n30, n31, n31, n30, n31, n30, n31 );
+var useF = 0;
+var showSec=1;
+var FCountries =  new Array("US", "Belize", "Bahamas", "U.S. Virgin Islands", "Guam", "Puerto Rico", "Cayman Island");
 
+function autoF(c)
+{
+	var unit=localStorage.getItem(TEMPSCALE);
+	if(unit==='C')
+	{
+		useF=0;
+		return;
+	}
+	if(unit==='F')
+	{
+		useF=1;
+		return;
+	}
+	useF=0;
+	for(x=0;x<FCountries.length;x++)
+	{
+		if(c.toUpperCase() === FCountries[x].toUpperCase())
+			useF=1;
+	}
+}
 
 function initialize()
 {
@@ -302,6 +327,13 @@ function iconFromWeatherId(weatherId)
 	}
 }
 
+function convertTemp(t)
+{
+	if(useF)
+		return ((t*9)/5)+32;
+	return t;
+}
+
 function fetchWeather(latitude, longitude) 
 {
 	initialize();
@@ -316,6 +348,16 @@ function fetchWeather(latitude, longitude)
 	data["mn"]=MOONPCT;
 	data["ps"]=Phase;
 	data["zd"]=Zodiac;
+	if(localStorage.getItem(SHOWSEC)==='y')
+		showSec=1;
+	if(localStorage.getItem(SHOWSEC)==='Y')
+		showSec=1;
+
+	if(localStorage.getItem(SHOWSEC)==='n')
+		showSec=0;
+	if(localStorage.getItem(SHOWSEC)==='N')
+		showSec=0;
+	data["sc"]=showSec;
 
 	var offset = new Date().getTimezoneOffset()*60;
 	//data['tz']=-(offset/60/60);
@@ -334,13 +376,14 @@ function fetchWeather(latitude, longitude)
         response = JSON.parse(req.responseText);
 				if (response)
 				{
+								autoF(response.city.country);
 								data["ct"]=response.city.name;
 								for(var i=0;i<response.list.length;i++)
 								{
 												var w = response.list[i];
 												data["ic"+i]=iconFromWeatherId(w.weather[0].id);
-												data["mn"+i]=Math.round(w.temp.min - 273.15);
-												data["mx"+i]=Math.round(w.temp.max - 273.15);
+												data["mn"+i]=convertTemp(Math.round(w.temp.min - 273.15));
+												data["mx"+i]=convertTemp(Math.round(w.temp.max - 273.15));
 												//		data["hm"+i]=w.humidity;
 												//		data["pr"+i]=w.pressure;
 												data["dt"+i]=w.dt-offset;
@@ -368,7 +411,7 @@ function fetchWeather(latitude, longitude)
       	responseW = JSON.parse(reqW.responseText);
 				if(responseW)
 				{
-								data["tm"]=Math.round(responseW.main.temp - 273.15);
+								data["tm"]=convertTemp(Math.round(responseW.main.temp - 273.15));
 								data["sr"]=responseW.sys.sunrise-offset;
 								data["ss"]=responseW.sys.sunset-offset;
 				}
@@ -420,6 +463,20 @@ Pebble.addEventListener("webviewclosed",
                           console.log("webview closed");
                           console.log(e.type);
                           console.log(e.response);
+													var r=JSON.parse(e.response);
+													localStorage.setItem(SHOWSEC, r.showSec);
+													localStorage.setItem(TEMPSCALE, r.unit);
+                          locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
                         });
 
+Pebble.addEventListener('showConfiguration',
+												function(e) 
+												{
+														
+													var s=localStorage.getItem(SHOWSEC);
+													var u=localStorage.getItem(TEMPSCALE);
+													var url='http://ipocketcast.com/watchface-config.php?showSec='+s+'&unit='+u;
+													console.log("Opening: "+url);
+  												Pebble.openURL(url);
+												});
 

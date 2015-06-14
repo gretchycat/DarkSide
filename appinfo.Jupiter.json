@@ -2,6 +2,7 @@
   "uuid": "971f48bf-f215-454e-8cad-8b6949c62f23",
   "shortName": "Jupiter",
   "longName": "Jupiter",
+	"capabilities": [ "configurable" ],
   "companyName": "Gretchen Maculo",
   "versionCode": 240,
   "versionLabel": "2.4",
@@ -36,21 +37,25 @@
     "tz": 24,
     "mn": 25,
 		"ps": 26,
-		"zd": 27
+		"zd": 27,
+		"sc": 28
   },
   "resources": {
     "media": [
       {
+				"characterRegex": "[\\s:0-9]",
         "type": "font",
         "name": "FONT_BEYOND_30_BOLD",
         "file": "fonts/Jupiter/BeyondTheLightedStage.ttf"
       },
       {
+				"characterRegex": "[0-9]",
         "type": "font",
         "name": "FONT_BEYOND_24_BOLD",
         "file": "fonts/Jupiter/BeyondTheLightedStage.ttf"
       },
       {
+				"characterRegex": "[0-9/]",
         "type": "font",
         "name": "FONT_BEYOND_16",
         "file": "fonts/Jupiter/BeyondTheLightedStage.ttf"

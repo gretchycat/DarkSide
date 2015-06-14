@@ -69,6 +69,7 @@ char str_time[10];
 char str_date[14];
 char str_sec[4];
 int tz=0;	//GMT
+int showsec=1;
 int moonpct=-1;
 GFont *timeF=NULL;
 GFont *secF=NULL;
@@ -155,12 +156,12 @@ static AppSync sync;
 static uint8_t sync_buffer[330];
 int hasColor;
 
-int convertTemp(int c)
-{
-	if(useFahrenheit)
-		return (c*9/5)+32;
-	return c;
-}
+//int convertTemp(int c)
+//{
+//	if(useFahrenheit)
+//		return (c*9/5)+32;
+///	return c;
+//}
 
 enum WeatherKey {
   WEATHER_CITY = 0, WEATHER_TEMPERATURE, 
@@ -169,7 +170,7 @@ enum WeatherKey {
   WEATHER_ICON3, WEATHER_MIN3, WEATHER_MAX3, WEATHER_DATE3,
   WEATHER_ICON4, WEATHER_MIN4, WEATHER_MAX4, WEATHER_DATE4,
   WEATHER_ICON5, WEATHER_MIN5, WEATHER_MAX5, WEATHER_DATE5,
-	WEATHER_SUNRISE, WEATHER_SUNSET, TIMEZONE, MOON, PHASE, ZODIAC
+	WEATHER_SUNRISE, WEATHER_SUNSET, TIMEZONE, MOON, PHASE, ZODIAC, SHOWSEC
 };
 
 static const uint8_t Wicons[] = {
@@ -258,7 +259,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       text_layer_set_text(city_layer, cityField);
       break;
   	case WEATHER_TEMPERATURE:
-			snprintf(temp[0], sizeof(temp[0]), "%d\u00B0", convertTemp((int)new_tuple->value->int32));
+			snprintf(temp[0], sizeof(temp[0]), "%d\u00B0", (int)new_tuple->value->int32);
 			text_layer_set_text(temperature_layer, temp[0]);
 			break;
 		case WEATHER_SUNRISE:
@@ -313,6 +314,9 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 			strcpy(phaseField, new_tuple->value->cstring);
       text_layer_set_text(phase_layer, phaseField);
  		break;
+		case SHOWSEC:
+			showsec=new_tuple->value->uint32;
+			break;
 	}
 
   		//APP_LOG(APP_LOG_LEVEL_DEBUG, "PHASE=(%d) '%s'", (int)key,phaseField);
@@ -320,12 +324,12 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 	{	
 		if(key==Wmin[x])
 		{
-			snprintf(min[x], sizeof(min[x]), "%d\u00B0", convertTemp((int)new_tuple->value->int32));
+			snprintf(min[x], sizeof(min[x]), "%d\u00B0", (int)new_tuple->value->int32);
 			text_layer_set_text(tempMin[x], min[x]);
 		}
 		if(key==Wmax[x])
 		{
-			snprintf(max[x], sizeof(max[x]), "%d\u00B0", convertTemp((int)new_tuple->value->int32));
+			snprintf(max[x], sizeof(max[x]), "%d\u00B0", (int)new_tuple->value->int32);
       text_layer_set_text(tempMax[x], max[x]);
 		}
 		if(key==Wdate[x])
@@ -366,6 +370,8 @@ static void refreshTime(struct tm *tm)
 		strftime(str_sec, sizeof(str_sec), secFormat24, tm);
 		strftime(str_date, sizeof(str_date), dateFormat, tm);
 	}
+	
+		APP_LOG(APP_LOG_LEVEL_INFO, "T:'%s' S:'%s' D:'%s'", str_time,str_sec, str_date);
 }
 
 static void updateTime()
@@ -380,6 +386,7 @@ static void updateTime()
 
 static void updateSec()
 {
+	layer_set_hidden(text_layer_get_layer(sec_layer), !showsec);
   text_layer_set_text(sec_layer, str_sec);
 	if(moonpct==-1)
 	{
@@ -804,6 +811,7 @@ static void weatherSync()
 		TupletInteger(MOON, -1),
 		TupletCString(PHASE, "-"),
 		TupletCString(ZODIAC, "-"),
+		TupletInteger(SHOWSEC, 1),
 		
   };
 
