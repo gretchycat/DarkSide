@@ -415,8 +415,8 @@ function fetchWeather(latitude, longitude)
 								data["sr"]=responseW.sys.sunrise-offset;
 								data["ss"]=responseW.sys.sunset-offset;
 				}
-				console.log("2:To Pebble: ("+JSON.stringify(data).length+") "+JSON.stringify(data));
-				if(data["ct"]!="None")
+				console.log("To Pebble: ("+JSON.stringify(data).length+") "+JSON.stringify(data));
+		//		if(data["ct"]!="None")
 						Pebble.sendAppMessage(data);
 			}
 		}

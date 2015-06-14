@@ -153,7 +153,7 @@ char min[FORECASTDAYS][16];
 char max[FORECASTDAYS][16];
 static GBitmap *weather_icon[4];
 static AppSync sync;
-static uint8_t sync_buffer[330];
+static uint8_t sync_buffer[360];
 int hasColor;
 
 //int convertTemp(int c)
@@ -371,7 +371,7 @@ static void refreshTime(struct tm *tm)
 		strftime(str_date, sizeof(str_date), dateFormat, tm);
 	}
 	
-		APP_LOG(APP_LOG_LEVEL_INFO, "T:'%s' S:'%s' D:'%s'", str_time,str_sec, str_date);
+//		APP_LOG(APP_LOG_LEVEL_INFO, "T:'%s' S:'%s' D:'%s'", str_time,str_sec, str_date);
 }
 
 static void updateTime()
