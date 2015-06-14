@@ -1,11 +1,11 @@
 {
-  "uuid": "971f48bf-f215-454e-8cad-8b6949c62f1c",
-  "shortName": "StarMan",
-  "longName": "StarMan",
+  "uuid": "971f48bf-f215-454e-8cad-8b6949c62f22",
+  "shortName": "Saturn",
+  "longName": "Saturn",
 	"capabilities": [ "configurable" ],
   "companyName": "Gretchen Maculo",
   "versionCode": 250,
-  "versionLabel": "2.5",
+  "versionLabel": "2.4",
   "watchapp": {
     "watchface": true
   },
@@ -47,240 +47,240 @@
 				"characterRegex": "[\\s:0-9]",
         "type": "font",
         "name": "FONT_BEYOND_30_BOLD",
-        "file": "fonts/StarMan/BeyondTheLightedStage.ttf"
+        "file": "fonts/Saturn/BeyondTheLightedStage.ttf"
       },
       {
 				"characterRegex": "[0-9]",
         "type": "font",
         "name": "FONT_BEYOND_24_BOLD",
-        "file": "fonts/StarMan/BeyondTheLightedStage.ttf"
+        "file": "fonts/Saturn/BeyondTheLightedStage.ttf"
       },
       {
 				"characterRegex": "[0-9/]",
         "type": "font",
         "name": "FONT_BEYOND_16",
-        "file": "fonts/StarMan/BeyondTheLightedStage.ttf"
+        "file": "fonts/Saturn/BeyondTheLightedStage.ttf"
       },
       {
         "type": "font",
         "name": "FONT_UBUNTU_10",
-        "file": "fonts/StarMan/Ubuntu-M.ttf"
+        "file": "fonts/Saturn/Ubuntu-M.ttf"
       },
       {
         "type": "font",
         "name": "FONT_UBUNTU_14",
-        "file": "fonts/StarMan/Ubuntu-M.ttf"
+        "file": "fonts/Saturn/Ubuntu-M.ttf"
       },
       {
         "type": "font",
         "name": "FONT_UBUNTU_14_BOLD",
-        "file": "fonts/StarMan/Ubuntu-M.ttf"
+        "file": "fonts/Saturn/Ubuntu-M.ttf"
       },
       {
         "type": "png",
         "name": "SPLASH",
-        "file": "images/StarMan/darkside.png"
+        "file": "images/Saturn/darkside.png"
       },
       {
         "type": "png",
         "name": "AM",
-        "file": "images/StarMan/am.png"
+        "file": "images/Saturn/am.png"
       },
       {
         "type": "png",
         "name": "PM",
-        "file": "images/StarMan/pm.png"
+        "file": "images/Saturn/pm.png"
       },
       {
         "type": "png",
         "name": "BATTERY_0",
-        "file": "images/StarMan/b000.png"
+        "file": "images/Saturn/b000.png"
       },
       {
         "type": "png",
         "name": "BATTERY_10",
-        "file": "images/StarMan/b010.png"
+        "file": "images/Saturn/b010.png"
       },
       {
         "type": "png",
         "name": "BATTERY_20",
-        "file": "images/StarMan/b020.png"
+        "file": "images/Saturn/b020.png"
       },
       {
         "type": "png",
         "name": "BATTERY_30",
-        "file": "images/StarMan/b030.png"
+        "file": "images/Saturn/b030.png"
       },
       {
         "type": "png",
         "name": "BATTERY_40",
-        "file": "images/StarMan/b040.png"
+        "file": "images/Saturn/b040.png"
       },
       {
         "type": "png",
         "name": "BATTERY_50",
-        "file": "images/StarMan/b050.png"
+        "file": "images/Saturn/b050.png"
       },
       {
         "type": "png",
         "name": "BATTERY_60",
-        "file": "images/StarMan/b060.png"
+        "file": "images/Saturn/b060.png"
       },
       {
         "type": "png",
         "name": "BATTERY_70",
-        "file": "images/StarMan/b070.png"
+        "file": "images/Saturn/b070.png"
       },
       {
         "type": "png",
         "name": "BATTERY_80",
-        "file": "images/StarMan/b080.png"
+        "file": "images/Saturn/b080.png"
       },
       {
         "type": "png",
         "name": "BATTERY_90",
-        "file": "images/StarMan/b090.png"
+        "file": "images/Saturn/b090.png"
       },
       {
         "type": "png",
         "name": "BATTERY_100",
-        "file": "images/StarMan/b100.png"
+        "file": "images/Saturn/b100.png"
       },
       {
         "type": "png",
         "name": "CHARGE",
-        "file": "images/StarMan/charge.png"
+        "file": "images/Saturn/charge.png"
       },
       {
         "type": "png",
         "name": "BTON",
-        "file": "images/StarMan/bton.png"
+        "file": "images/Saturn/bton.png"
       },
       {
         "type": "png",
         "name": "BTOFF",
-        "file": "images/StarMan/btoff.png"
+        "file": "images/Saturn/btoff.png"
       },
       {
         "type": "png",
         "name": "BACK",
-        "file": "images/StarMan/back.png"
+        "file": "images/Saturn/back.png"
       },
       {
         "type": "png",
         "name": "IMAGE_SUN",
-        "file": "images/StarMan/sun.png"
+        "file": "images/Saturn/sun.png"
       },
       {
         "type": "png",
         "name": "IMAGE_RAIN",
-        "file": "images/StarMan/rain.png"
+        "file": "images/Saturn/rain.png"
       },
       {
         "type": "png",
         "name": "IMAGE_CLOUD",
-        "file": "images/StarMan/cloud.png"
+        "file": "images/Saturn/cloud.png"
       },
       {
         "type": "png",
         "name": "IMAGE_SNOW",
-        "file": "images/StarMan/snow.png"
+        "file": "images/Saturn/snow.png"
       },
       {
         "type": "png",
         "name": "IMAGE_THUNDER",
-        "file": "images/StarMan/thunder.png"
+        "file": "images/Saturn/thunder.png"
       },
       {
         "type": "png",
         "name": "IMAGE_MIST",
-        "file": "images/StarMan/mist.png"
+        "file": "images/Saturn/mist.png"
       },
       {
 			  "type": "png",
         "name": "IMAGE_MOON_PHASES",
-        "file": "images/StarMan/phases.png"
+        "file": "images/Saturn/phases.png"
       },
 			{
         "type": "png",
         "name": "IMAGE_EXTREME",
-        "file": "images/StarMan/extreme.png"
+        "file": "images/Saturn/extreme.png"
       },
       {
         "type": "png",
         "name": "IMAGE_COMPASS",
-        "file": "images/StarMan/compass.png"
+        "file": "images/Saturn/compass.png"
       },
 			{
         "type": "png",
         "name": "IMAGE_COMPASS_BACK",
-        "file": "images/StarMan/compass_back.png"
+        "file": "images/Saturn/compass_back.png"
       },
       {
         "type": "png",
         "name": "IMAGE_RISESET",
-        "file": "images/StarMan/sunriseset.png"
+        "file": "images/Saturn/sunriseset.png"
       },
       {
         "type": "png",
         "menuIcon": true,
         "name": "IMAGE_MENU_ICON",
-        "file": "images/StarMan/darkside-icon.png"
+        "file": "images/Saturn/darkside-icon.png"
       },
       {
         "type": "png",
         "name": "PHASE_0",
-        "file": "images/StarMan/phase0.png"
+        "file": "images/Saturn/phase0.png"
       },
       {
         "type": "png",
         "name": "PHASE_10",
-        "file": "images/StarMan/phase10.png"
+        "file": "images/Saturn/phase10.png"
       },
       {
         "type": "png",
         "name": "PHASE_20",
-        "file": "images/StarMan/phase20.png"
+        "file": "images/Saturn/phase20.png"
       },
       {
         "type": "png",
         "name": "PHASE_30",
-        "file": "images/StarMan/phase30.png"
+        "file": "images/Saturn/phase30.png"
       },
       {
         "type": "png",
         "name": "PHASE_40",
-        "file": "images/StarMan/phase40.png"
+        "file": "images/Saturn/phase40.png"
       },
       {
         "type": "png",
         "name": "PHASE_50",
-        "file": "images/StarMan/phase50.png"
+        "file": "images/Saturn/phase50.png"
       },
       {
         "type": "png",
         "name": "PHASE_60",
-        "file": "images/StarMan/phase60.png"
+        "file": "images/Saturn/phase60.png"
       },
       {
         "type": "png",
         "name": "PHASE_70",
-        "file": "images/StarMan/phase70.png"
+        "file": "images/Saturn/phase70.png"
       },
       {
         "type": "png",
         "name": "PHASE_80",
-        "file": "images/StarMan/phase80.png"
+        "file": "images/Saturn/phase80.png"
       },
       {
         "type": "png",
         "name": "PHASE_90",
-        "file": "images/StarMan/phase90.png"
+        "file": "images/Saturn/phase90.png"
       },
       {
         "type": "png",
         "name": "PHASE_100",
-        "file": "images/StarMan/phase100.png"
+        "file": "images/Saturn/phase100.png"
       }
     ]
   },
@@ -290,4 +290,3 @@
   ],
   "sdkVersion": "3"
 }
-

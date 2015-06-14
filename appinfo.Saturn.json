@@ -4,8 +4,8 @@
   "longName": "Saturn",
 	"capabilities": [ "configurable" ],
   "companyName": "Gretchen Maculo",
-  "versionCode": 240,
-  "versionLabel": "2.4",
+  "versionCode": 250,
+  "versionLabel": "2.5",
   "watchapp": {
     "watchface": true
   },
