@@ -4,8 +4,8 @@
   "longName": "TheEndlessRiver",
 	"capabilities": [ "configurable" ],
   "companyName": "Gretchen Maculo",
-  "versionCode": 250,
-  "versionLabel": "2.5",
+  "versionCode": 260,
+  "versionLabel": "2.6",
   "watchapp": {
     "watchface": true
   },
@@ -38,7 +38,10 @@
     "mn": 25,
 		"ps": 26,
 		"zd": 27,
-		"sc": 28
+		"sc": 28,
+		"lt": 29,
+		"ln": 30
+
 
   },
   "resources": {
@@ -281,7 +284,17 @@
         "type": "png",
         "name": "PHASE_100",
         "file": "images/TheEndlessRiver/phase100.png"
-      }
+      },
+			{
+				"type": "png",
+				"name": "WORLD",
+				"file": "images/TheEndlessRiver/world.png"
+			},
+			{
+				"type": "png",
+				"name": "WORLDNIGHT",
+				"file": "images/TheEndlessRiver/worldnight.png"
+			}
     ]
   },
   "targetPlatforms": [
