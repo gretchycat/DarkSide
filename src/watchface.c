@@ -259,6 +259,15 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 	wetsec=SYNC_ERROR_TIMEOUT;
 }
 
+static void handle_vibe(bool vibe) 
+{
+	if(vibe)
+		bitmap_layer_set_bitmap(vb_layer, vbon);
+	else
+		bitmap_layer_set_bitmap(vb_layer, vboff);
+}
+
+
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) 
 {
 	//APP_LOG(APP_LOG_LEVEL_DEBUG, "tuple changed %d", (int)key);
@@ -338,6 +347,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 			break;
 		case VIBE:
 			vibeHour=new_tuple->value->int32;
+			handle_vibe(vibeHour);
 			break;
 
 
@@ -664,14 +674,6 @@ static void handle_bluetooth(bool connected)
 		bitmap_layer_set_bitmap(bt_layer, bton);
 	else
 		bitmap_layer_set_bitmap(bt_layer, btoff);
-}
-
-static void handle_vibe(bool vibe) 
-{
-	if(vibe)
-		bitmap_layer_set_bitmap(vb_layer, vbon);
-	else
-		bitmap_layer_set_bitmap(vb_layer, vboff);
 }
 
 static void drawDecoration(Window *window)
@@ -1019,6 +1021,8 @@ static void init(void)
 					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS);
 					bton=gbitmap_create_with_resource(RESOURCE_ID_BTON);
 					btoff=gbitmap_create_with_resource(RESOURCE_ID_BTOFF);
+					vbon=gbitmap_create_with_resource(RESOURCE_ID_VIBEON);
+					vboff=gbitmap_create_with_resource(RESOURCE_ID_VIBEOFF);
 					am=gbitmap_create_with_resource(RESOURCE_ID_AM);
 					pm=gbitmap_create_with_resource(RESOURCE_ID_PM);
 					riseset=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_RISESET);
