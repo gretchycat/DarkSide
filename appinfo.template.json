@@ -1,5 +1,5 @@
 {
-  "uuid": "971f48bf-f215-454e-8cad-8b6949c62f1b",
+  "uuid": "UUID",
   "shortName": "FACENAME",
   "longName": "FACENAME",
 	"capabilities": [ "configurable" ],
@@ -40,9 +40,8 @@
 		"zd": 27,
 		"sc": 28,
 		"lt": 29,
-		"ln": 30
-
-
+		"ln": 30,
+		"vb": 31
   },
   "resources": {
     "media": [
@@ -163,6 +162,16 @@
         "type": "png",
         "name": "BTOFF",
         "file": "images/FACENAME/btoff.png"
+      },
+      {
+        "type": "png",
+        "name": "VIBEON",
+        "file": "images/FACENAME/vibeon.png"
+      },
+      {
+        "type": "png",
+        "name": "VIBEOFF",
+        "file": "images/FACENAME/vibeoff.png"
       },
       {
         "type": "png",

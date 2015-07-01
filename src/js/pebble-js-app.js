@@ -19,12 +19,14 @@ var LON;
 var SGN;*/
 var TEMPSCALE=0;
 var SHOWSEC=1;
+var VIBEHOUR=2;
 var n28 = parseInt( "28" );
 var n30 = parseInt( "30" );
 var n31 = parseInt( "31" );
 var dim = new Array( n31, n28, n31, n30, n31, n30, n31, n31, n30, n31, n30, n31 );
 var useF = 0;
 var showSec=1;
+var vibeHour=1;
 var FCountries =  new Array("US", "Belize", "Bahamas", "U.S. Virgin Islands", "Guam", "Puerto Rico", "Cayman Island");
 
 function autoF(c)
@@ -330,8 +332,8 @@ function iconFromWeatherId(weatherId)
 function convertTemp(t)
 {
 	if(useF)
-		return ((t*9)/5)+32;
-	return t;
+		return parseInt((t*9)/5)+32;
+	return parseInt(t);
 }
 
 function fetchWeather(latitude, longitude) 
@@ -348,19 +350,28 @@ function fetchWeather(latitude, longitude)
 	data["mn"]=MOONPCT;
 	data["ps"]=Phase;
 	data["zd"]=Zodiac;
+	data["lt"]=parseInt(latitude);
+	data["ln"]=parseInt(longitude);
+
 	if(localStorage.getItem(SHOWSEC)==='y')
 		showSec=1;
 	if(localStorage.getItem(SHOWSEC)==='Y')
 		showSec=1;
-
 	if(localStorage.getItem(SHOWSEC)==='n')
 		showSec=0;
 	if(localStorage.getItem(SHOWSEC)==='N')
 		showSec=0;
 	data["sc"]=showSec;
+	vibeHour=1;
+	if(localStorage.getItem(VIBEHOUR)==='n')
+		vibeHour=0;
+	if(localStorage.getItem(VIBEHOUR)==='N')
+		vibeHour=0;
+	data["vb"]=vibeHour;
+
 
 	var offset = new Date().getTimezoneOffset()*60;
-	//data['tz']=-(offset/60/60);
+	data['tz']=-(offset/60/60);
 	var url="http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=5&mode=json";
 	console.log("Connecting to: "+url);
 	req.open('GET', url, false);
@@ -465,6 +476,7 @@ Pebble.addEventListener("webviewclosed",
                           console.log(e.response);
 													var r=JSON.parse(e.response);
 													localStorage.setItem(SHOWSEC, r.showSec);
+													localStorage.setItem(VIBEHOUR, r.vibeHour);
 													localStorage.setItem(TEMPSCALE, r.unit);
                           locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
                         });
@@ -475,7 +487,8 @@ Pebble.addEventListener('showConfiguration',
 														
 													var s=localStorage.getItem(SHOWSEC);
 													var u=localStorage.getItem(TEMPSCALE);
-													var url='http://ipocketcast.com/watchface-config.php?showSec='+s+'&unit='+u;
+													var v=localStorage.getItem(VIBEHOUR);
+													var url='http://ipocketcast.com/watchface-config.php?showSec='+s+'&unit='+u+'&vibeHour='+v;
 													console.log("Opening: "+url);
   												Pebble.openURL(url);
 												});

@@ -40,8 +40,8 @@
 		"zd": 27,
 		"sc": 28,
 		"lt": 29,
-		"ln": 30
-
+		"ln": 30,
+		"vb": 31
   },
   "resources": {
     "media": [
@@ -162,6 +162,16 @@
         "type": "png",
         "name": "BTOFF",
         "file": "images/DarkSide/btoff.png"
+      },
+      {
+        "type": "png",
+        "name": "VIBEON",
+        "file": "images/DarkSide/vibeon.png"
+      },
+      {
+        "type": "png",
+        "name": "VIBEOFF",
+        "file": "images/DarkSide/vibeoff.png"
       },
       {
         "type": "png",
@@ -302,4 +312,3 @@
   ],
   "sdkVersion": "3"
 }
-

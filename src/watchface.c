@@ -32,20 +32,25 @@
 #define sunsetTimeFormat "%l:%M:%S %p"// %m/%d/%Y"
 #define sunsetTimeFormat24 "%H:%M:%S"// %m/%d/%Y"
 
-#define batW 16
-#define batH 8
-#define batX (144-batW-chargeW-1)
-#define batY 1
-
 #define chargeW 8
 #define chargeH 8
 #define chargeX (144-chargeW)
 #define chargeY batY
 
+#define batW 16
+#define batH 8
+#define batX (144-batW-chargeW-1)
+#define batY 1
+
 #define btW 15
 #define btH 8
 #define btX (144-batW-btW-chargeW-2)
 #define btY batY
+
+#define vbW 12
+#define vbH 8
+#define vbX (144-vbW-batW-btW-chargeW-2)
+#define vbY batY
 
 #define wetX 0
 #define wetY (dateY+dateH+2)
@@ -93,6 +98,8 @@ static GBitmap *bat[11];
 static GBitmap *charge=NULL;
 static GBitmap *bton=NULL;
 static GBitmap *btoff=NULL;
+static GBitmap *vbon=NULL;
+static GBitmap *vboff=NULL;
 static GBitmap *back=NULL;
 static GBitmap *splash=NULL;
 static GBitmap *am=NULL;
@@ -101,6 +108,8 @@ static GBitmap *riseset=NULL;
 static GBitmap *compass_imageb=NULL;
 static GBitmap *compass_imagew=NULL;
 static GBitmap *moon=NULL;
+static GBitmap *world=NULL;
+static GBitmap *worldnight=NULL;
 static Window *window=NULL;
 static Layer *window_layer=NULL;
 static Layer *weather_layer=NULL;
@@ -116,6 +125,7 @@ static TextLayer *sec_layer=NULL;
 static TextLayer *date_layer=NULL;
 static TextLayer *calendar[7][calR];
 static char calDay[7][calR-1][3];
+static BitmapLayer *vb_layer=NULL;
 static BitmapLayer *bt_layer=NULL;
 static BitmapLayer *bat_layer=NULL;
 static BitmapLayer *charge_layer=NULL;
@@ -126,11 +136,13 @@ static BitmapLayer *ampm=NULL;
 static int today=0;
 static int tapsec=0;
 bool isAM=true;
+bool vibeHour=true;
 static int wetsec=0;
 static TextLayer *city_layer=NULL;
 static TextLayer *phase_layer=NULL;
 static TextLayer *zodiac_layer=NULL;
 static TextLayer *temperature_layer=NULL;
+static BitmapLayer *world_layer=NULL;
 static BitmapLayer *icon_layer=NULL;
 static BitmapLayer *riseset_layer=NULL;
 static BitmapLayer *compass_image_layerb=NULL;
@@ -153,9 +165,10 @@ char min[FORECASTDAYS][16];
 char max[FORECASTDAYS][16];
 static GBitmap *weather_icon[4];
 static AppSync sync;
-static uint8_t sync_buffer[360];
+static uint8_t sync_buffer[380];
 int hasColor;
-
+int lat=0;
+int lon=0;
 //int convertTemp(int c)
 //{
 //	if(useFahrenheit)
@@ -170,7 +183,7 @@ enum WeatherKey {
   WEATHER_ICON3, WEATHER_MIN3, WEATHER_MAX3, WEATHER_DATE3,
   WEATHER_ICON4, WEATHER_MIN4, WEATHER_MAX4, WEATHER_DATE4,
   WEATHER_ICON5, WEATHER_MIN5, WEATHER_MAX5, WEATHER_DATE5,
-	WEATHER_SUNRISE, WEATHER_SUNSET, TIMEZONE, MOON, PHASE, ZODIAC, SHOWSEC
+	WEATHER_SUNRISE, WEATHER_SUNSET, TIMEZONE, MOON, PHASE, ZODIAC, SHOWSEC, LAT,LON,VIBE
 };
 
 static const uint8_t Wicons[] = {
@@ -270,7 +283,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 					strftime(sunrise, sizeof(sunrise), sunriseTimeFormat24, tm);
 				else
 					strftime(sunrise, sizeof(sunrise), sunriseTimeFormat, tm);
-				APP_LOG(APP_LOG_LEVEL_DEBUG, "sunrise: %s (%d)", sunrise, (int)t);
+//				APP_LOG(APP_LOG_LEVEL_DEBUG, "sunrise: %s (%d)", sunrise, (int)t);
 				text_layer_set_text(detailSunrise, sunrise);
 			}
 			break;
@@ -282,7 +295,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 					strftime(sunset, sizeof(sunset), sunsetTimeFormat24, tm);
 				else
 					strftime(sunset, sizeof(sunset), sunsetTimeFormat, tm);
-				APP_LOG(APP_LOG_LEVEL_DEBUG, "sunset: %s (%d)", sunset, (int)t);
+//				APP_LOG(APP_LOG_LEVEL_DEBUG, "sunset: %s (%d)", sunset, (int)t);
 				text_layer_set_text(detailSunset, sunset);
 			}
 			break;
@@ -317,6 +330,17 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 		case SHOWSEC:
 			showsec=new_tuple->value->uint32;
 			break;
+		case LAT:
+			lat=new_tuple->value->int32;
+			break;
+		case LON:
+			lon=new_tuple->value->int32;
+			break;
+		case VIBE:
+			vibeHour=new_tuple->value->int32;
+			break;
+
+
 	}
 
   		//APP_LOG(APP_LOG_LEVEL_DEBUG, "PHASE=(%d) '%s'", (int)key,phaseField);
@@ -604,7 +628,8 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed)
 		updateCalendar();
 	tapTimer();
 	if((tick_time->tm_sec==0)&&(tick_time->tm_min==0))
-		vibes_short_pulse();
+		if(vibeHour)
+			vibes_short_pulse();
 	weatherTimer();
 }
 
@@ -626,12 +651,27 @@ static void drawBluetooth(Window *window)
 	layer_add_child(window_layer, bitmap_layer_get_layer(bt_layer));
 }
 
+static void drawVibe(Window *window)
+{
+	vb_layer=bitmap_layer_create((GRect) { .origin = { vbX, vbY }, .size = { vbW, vbH } });
+	bitmap_layer_set_bitmap(vb_layer, vbon);
+	layer_add_child(window_layer, bitmap_layer_get_layer(vb_layer));
+}
+
 static void handle_bluetooth(bool connected) 
 {
 	if(connected)
 		bitmap_layer_set_bitmap(bt_layer, bton);
 	else
 		bitmap_layer_set_bitmap(bt_layer, btoff);
+}
+
+static void handle_vibe(bool vibe) 
+{
+	if(vibe)
+		bitmap_layer_set_bitmap(vb_layer, vbon);
+	else
+		bitmap_layer_set_bitmap(vb_layer, vboff);
 }
 
 static void drawDecoration(Window *window)
@@ -812,6 +852,9 @@ static void weatherSync()
 		TupletCString(PHASE, "-"),
 		TupletCString(ZODIAC, "-"),
 		TupletInteger(SHOWSEC, 1),
+		TupletInteger(LAT, 0),
+		TupletInteger(LON, 0),
+		TupletInteger(VIBE, 1)
 		
   };
 
@@ -912,6 +955,7 @@ static void window_load(Window *window)
 	drawCalendar(window);
 	drawBattery(window);
 	drawBluetooth(window);
+	drawVibe(window);
 	drawCompass(window);
 //	drawPedometer(window);
 
@@ -940,6 +984,7 @@ static void window_unload(Window *window)
 
 static void init(void) 
 {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "init");
 	hasColor=0;
 #ifdef PBL_COLOR
 	hasColor=1;
@@ -994,10 +1039,13 @@ static void init(void)
   });
   const int inbound_size = sizeof(sync_buffer);
   const int outbound_size = sizeof(sync_buffer);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "init0");
   app_message_open(inbound_size, outbound_size);
 
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "init1");
   window_stack_push(window, animated);
 	weatherSync();
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "init2");
 }
 
 static void deinit(void)

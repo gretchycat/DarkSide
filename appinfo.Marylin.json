@@ -1,7 +1,7 @@
 {
   "uuid": "971f48bf-f215-454e-8cad-8b6949c62f1e",
-  "shortName": "Marilyn",
-  "longName": "Marilyn",
+  "shortName": "Marylin",
+  "longName": "Marylin",
 	"capabilities": [ "configurable" ],
   "companyName": "Gretchen Maculo",
   "versionCode": 260,
@@ -40,9 +40,8 @@
 		"zd": 27,
 		"sc": 28,
 		"lt": 29,
-		"ln": 30
-
-
+		"ln": 30,
+		"vb": 31
   },
   "resources": {
     "media": [
@@ -163,6 +162,16 @@
         "type": "png",
         "name": "BTOFF",
         "file": "images/Marylin/btoff.png"
+      },
+      {
+        "type": "png",
+        "name": "VIBEON",
+        "file": "images/Marylin/vibeon.png"
+      },
+      {
+        "type": "png",
+        "name": "VIBEOFF",
+        "file": "images/Marylin/vibeoff.png"
       },
       {
         "type": "png",
