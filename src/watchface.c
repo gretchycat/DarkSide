@@ -171,12 +171,6 @@ static uint8_t sync_buffer[380];
 int hasColor;
 int lat=0;
 int lon=0;
-//int convertTemp(int c)
-//{
-//	if(useFahrenheit)
-//		return (c*9/5)+32;
-///	return c;
-//}
 
 enum WeatherKey {
   WEATHER_CITY = 0, WEATHER_TEMPERATURE, 
@@ -272,7 +266,6 @@ static void handle_vibe(bool vibe)
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) 
 {
-//	APP_LOG(APP_LOG_LEVEL_DEBUG, "tuple changed %d", (int)key);
   switch (key) 
 	{
     case WEATHER_ICON:
@@ -294,7 +287,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 					strftime(sunrise, sizeof(sunrise), sunriseTimeFormat24, tm);
 				else
 					strftime(sunrise, sizeof(sunrise), sunriseTimeFormat, tm);
-//				APP_LOG(APP_LOG_LEVEL_DEBUG, "sunrise: %s (%d)", sunrise, (int)t);
 				text_layer_set_text(detailSunrise, sunrise);
 			}
 			break;
@@ -306,13 +298,11 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 					strftime(sunset, sizeof(sunset), sunsetTimeFormat24, tm);
 				else
 					strftime(sunset, sizeof(sunset), sunsetTimeFormat, tm);
-//				APP_LOG(APP_LOG_LEVEL_DEBUG, "sunset: %s (%d)", sunset, (int)t);
 				text_layer_set_text(detailSunset, sunset);
 			}
 			break;
 		case TIMEZONE:
 			tz=new_tuple->value->int32/-3600.0;
-				APP_LOG(APP_LOG_LEVEL_DEBUG, "time zone: (%f)", tz);
 			break;
 		case MOON:
 			moonpct=(int)new_tuple->value->int32;
@@ -493,14 +483,7 @@ static void draw_earth() {
   #ifdef PBL_PLATFORM_APLITE 
   //APPLITE
   int time_offset=(tz)*-3600; 
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "tz offset: %d", time_offset/-3600);
-  // ##### calculate the time
-//#ifdef UTC_OFFSET
-//  int now = (int)time(NULL) + -3600 * UTC_OFFSET;
-//#else
   int now = (int)time(NULL) + time_offset;
-//#endif
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "1");
   float day_of_year; // value from 0 to 1 of progress through a year
   float time_of_day; // value from 0 to 1 of progress through a day
   // approx number of leap years since epoch
@@ -517,9 +500,7 @@ static void draw_earth() {
   // bottom to top of world goes from -32768 to 32768
   // 0.2164 is march 20, the 79th day of the year, the march equinox
   // Earth's inclination is 23.4 degrees, so sun should vary 23.4/90=.26 up and down
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "2");
   int sun_y = -sin_lookup((day_of_year - 0.2164) * TRIG_MAX_ANGLE) * .26 * .25;
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "3");
   // ##### draw the bitmap
 	int w=144;
 	int h=72;
@@ -527,28 +508,20 @@ static void draw_earth() {
   for(x = 0; x < w; x++) {
     int x_angle = (int)((float)TRIG_MAX_ANGLE * (float)x / (float)(w));
     for(y = 0; y < h; y++) {
-			if(y<64)
-			{
-      int byte = y * world->row_size_bytes + (int)(x / 8);
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "4");
-      int y_angle = (int)((float)TRIG_MAX_ANGLE * (float)y / (float)(h * 2)) - TRIG_MAX_ANGLE/4;
-      // spherical law of cosines
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "5");
-      float angle = ((float)sin_lookup(sun_y)/(float)TRIG_MAX_RATIO) * ((float)sin_lookup(y_angle)/(float)TRIG_MAX_RATIO);
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "6");
-      angle = angle + ((float)cos_lookup(sun_y)/(float)TRIG_MAX_RATIO) * ((float)cos_lookup(y_angle)/(float)TRIG_MAX_RATIO) * ((float)cos_lookup(sun_x - x_angle)/(float)TRIG_MAX_RATIO);
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "7");
-      if ((angle < 0) ^ (0x1 & (((char *)world->addr)[byte] >> (x % 8)))) {
-        // white pixel
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "8");
-        ((char *)world->addr)[byte] = ((char *)world->addr)[byte] | (0x1 << (x % 8));
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "9");
-      } else {
-        // black pixel
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "10");
-        ((char *)world->addr)[byte] = ((char *)world->addr)[byte] & ~(0x1 << (x % 8));
-//  APP_LOG(APP_LOG_LEVEL_DEBUG, "11");
-      }
+						if(y<64)
+						{
+										int byte = y * world->row_size_bytes + (int)(x / 8);
+										int y_angle = (int)((float)TRIG_MAX_ANGLE * (float)y / (float)(h * 2)) - TRIG_MAX_ANGLE/4;
+										// spherical law of cosines
+										float angle = ((float)sin_lookup(sun_y)/(float)TRIG_MAX_RATIO) * ((float)sin_lookup(y_angle)/(float)TRIG_MAX_RATIO);
+										angle = angle + ((float)cos_lookup(sun_y)/(float)TRIG_MAX_RATIO) * ((float)cos_lookup(y_angle)/(float)TRIG_MAX_RATIO) * ((float)cos_lookup(sun_x - x_angle)/(float)TRIG_MAX_RATIO);
+										if ((angle < 0) ^ (0x1 & (((char *)world->addr)[byte] >> (x % 8)))) {
+														// white pixel
+														((char *)world->addr)[byte] = ((char *)world->addr)[byte] | (0x1 << (x % 8));
+										} else {
+														// black pixel
+														((char *)world->addr)[byte] = ((char *)world->addr)[byte] & ~(0x1 << (x % 8));
+										}
 			}
     }
   }
