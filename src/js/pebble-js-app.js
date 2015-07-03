@@ -371,7 +371,7 @@ function fetchWeather(latitude, longitude)
 
 
 	var offset = new Date().getTimezoneOffset()*60;
-	data['tz']=-(offset/60/60);
+	data['tz']=offset;
 	var url="http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=5&mode=json";
 	console.log("Connecting to: "+url);
 	req.open('GET', url, false);

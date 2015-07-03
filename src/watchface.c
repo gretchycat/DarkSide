@@ -1,4 +1,6 @@
 #include <pebble.h>
+#include <math.h>
+#include <string.h>
 
 #define bounds layer_get_bounds(window_get_root_layer(window))
 #define secInDay 60*60*24
@@ -73,7 +75,7 @@
 char str_time[10];
 char str_date[14];
 char str_sec[4];
-int tz=0;	//GMT
+float tz=0;	//GMT
 int showsec=1;
 int moonpct=-1;
 GFont *timeF=NULL;
@@ -254,7 +256,7 @@ static const uint32_t WEATHER_ICONS[] = {
 char* dayStr[7]={"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
 	strcpy(cityField, "Sync Error");
 	wetsec=SYNC_ERROR_TIMEOUT;
 }
@@ -270,7 +272,7 @@ static void handle_vibe(bool vibe)
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) 
 {
-	//APP_LOG(APP_LOG_LEVEL_DEBUG, "tuple changed %d", (int)key);
+//	APP_LOG(APP_LOG_LEVEL_DEBUG, "tuple changed %d", (int)key);
   switch (key) 
 	{
     case WEATHER_ICON:
@@ -309,7 +311,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 			}
 			break;
 		case TIMEZONE:
-			tz=(int)new_tuple->value->int32;
+			tz=new_tuple->value->int32/-3600.0;
+				APP_LOG(APP_LOG_LEVEL_DEBUG, "time zone: (%f)", tz);
 			break;
 		case MOON:
 			moonpct=(int)new_tuple->value->int32;
@@ -479,11 +482,83 @@ static void handle_battery(BatteryChargeState charge_state)
 
 static void handle_compass(CompassHeadingData d)
 {
-	if(tapPage==3)
+	if(tapPage==4)
 	{
 		rot_bitmap_layer_set_angle(compass_image_layerw, d.magnetic_heading);	
 	}
 }
+
+static void draw_earth() {
+
+  #ifdef PBL_PLATFORM_APLITE 
+  //APPLITE
+  int time_offset=(tz)*-3600; 
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "tz offset: %d", time_offset/-3600);
+  // ##### calculate the time
+//#ifdef UTC_OFFSET
+//  int now = (int)time(NULL) + -3600 * UTC_OFFSET;
+//#else
+  int now = (int)time(NULL) + time_offset;
+//#endif
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "1");
+  float day_of_year; // value from 0 to 1 of progress through a year
+  float time_of_day; // value from 0 to 1 of progress through a day
+  // approx number of leap years since epoch
+  // = now / SECONDS_IN_YEAR * .24; (.24 = average rate of leap years)
+  int leap_years = (int)((float)now / 131487192.0);
+  // day_of_year is an estimate, but should be correct to within one day
+  day_of_year = now - (((int)((float)now / 31556926.0) * 365 + leap_years) * 86400);
+  day_of_year = day_of_year / 86400.0;
+  time_of_day = day_of_year - (int)day_of_year;
+  day_of_year = day_of_year / 365.0;
+  // ##### calculate the position of the sun
+  // left to right of world goes from 0 to 65536
+  int sun_x = (int)((float)TRIG_MAX_ANGLE * (1.0 - time_of_day));
+  // bottom to top of world goes from -32768 to 32768
+  // 0.2164 is march 20, the 79th day of the year, the march equinox
+  // Earth's inclination is 23.4 degrees, so sun should vary 23.4/90=.26 up and down
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "2");
+  int sun_y = -sin_lookup((day_of_year - 0.2164) * TRIG_MAX_ANGLE) * .26 * .25;
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "3");
+  // ##### draw the bitmap
+	int w=144;
+	int h=72;
+  int x, y;
+  for(x = 0; x < w; x++) {
+    int x_angle = (int)((float)TRIG_MAX_ANGLE * (float)x / (float)(w));
+    for(y = 0; y < h; y++) {
+			if(y<64)
+			{
+      int byte = y * world->row_size_bytes + (int)(x / 8);
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "4");
+      int y_angle = (int)((float)TRIG_MAX_ANGLE * (float)y / (float)(h * 2)) - TRIG_MAX_ANGLE/4;
+      // spherical law of cosines
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "5");
+      float angle = ((float)sin_lookup(sun_y)/(float)TRIG_MAX_RATIO) * ((float)sin_lookup(y_angle)/(float)TRIG_MAX_RATIO);
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "6");
+      angle = angle + ((float)cos_lookup(sun_y)/(float)TRIG_MAX_RATIO) * ((float)cos_lookup(y_angle)/(float)TRIG_MAX_RATIO) * ((float)cos_lookup(sun_x - x_angle)/(float)TRIG_MAX_RATIO);
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "7");
+      if ((angle < 0) ^ (0x1 & (((char *)world->addr)[byte] >> (x % 8)))) {
+        // white pixel
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "8");
+        ((char *)world->addr)[byte] = ((char *)world->addr)[byte] | (0x1 << (x % 8));
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "9");
+      } else {
+        // black pixel
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "10");
+        ((char *)world->addr)[byte] = ((char *)world->addr)[byte] & ~(0x1 << (x % 8));
+//  APP_LOG(APP_LOG_LEVEL_DEBUG, "11");
+      }
+			}
+    }
+  }
+  layer_mark_dirty(bitmap_layer_get_layer(world_layer));
+  #else
+  //BASALT
+  #endif
+  //
+}
+
 
 inline static void showTapPage(int pg)
 {
@@ -491,14 +566,32 @@ inline static void showTapPage(int pg)
 	int l1=true;
 	int l2=true;
 	int l3=true;
-	if(pg!=3)
+	int l4=true;
+	if(pg!=4)
 		compass_service_unsubscribe();
+	if((pg!=0)&&(pg!=4))
+	{
+		if(splash)
+		{
+			gbitmap_destroy(splash);
+			splash=NULL;
+		}
+	}
+	if(pg!=3)
+	{
+		if(world)
+		{
+			gbitmap_destroy(world);
+			world=NULL;
+		}
+		if(worldnight)
+		{
+			gbitmap_destroy(worldnight);
+			worldnight=NULL;
+		}
+	}
 	switch(pg)
 	{
-		case 0:
-		{
-			l0=false;
-		};break;
 		case 1:
 		{//set city text field to cityField
 			l1=false;
@@ -516,27 +609,40 @@ inline static void showTapPage(int pg)
 		};break;
 		case 3:
 		{
-			compass_service_subscribe(&handle_compass);
+				world=gbitmap_create_with_resource(RESOURCE_ID_WORLD);
+#ifdef PBL_COLOR
+				worldnight=gbitmap_create_with_resource(RESOURCE_ID_WORLDNIGHT);
+#endif
 			l3=false;
-			l0=false;
+			draw_earth();
+			bitmap_layer_set_bitmap(world_layer, world);
 		};break;
+		case 4:
+		{
+			compass_service_subscribe(&handle_compass);
+			l4=false;
+		};
+		case 0:
 		default:
 		{
+			if(!splash)
+				splash=gbitmap_create_with_resource(RESOURCE_ID_SPLASH);
+			bitmap_layer_set_bitmap(splash_layer, splash);
 			l0=false;
 		};break;
 	}
 	layer_set_hidden(bitmap_layer_get_layer(splash_layer), l0);
 	layer_set_hidden(weather_layer, l1);
 	layer_set_hidden(weather_detail_layer, l2);
-	layer_set_hidden(compass_layer, l3);
+	layer_set_hidden(bitmap_layer_get_layer(world_layer), l3);
+	layer_set_hidden(compass_layer, l4);
 	tapsec=TAPTIMER;
-
 }
 
 static void handle_tap(AccelAxisType axis, int32_t direction)
 {
 	tapPage++;
-	if(tapPage>3)
+	if(tapPage>4)
 		tapPage=0;
 	showTapPage(tapPage);
 }
@@ -560,7 +666,6 @@ static void weatherTimer()
 	{
 		showTapPage(1);
 		wetsec=WEATHERTIMER;
-		APP_LOG(APP_LOG_LEVEL_INFO, "Updating weather.");
   	app_message_outbox_send();
 		//weather update
 	}
@@ -679,11 +784,20 @@ static void handle_bluetooth(bool connected)
 static void drawDecoration(Window *window)
 {
 	back_layer=bitmap_layer_create(bounds);
-	bitmap_layer_set_bitmap(back_layer, back);
+	if(back)
+		bitmap_layer_set_bitmap(back_layer, back);
 	layer_add_child(window_layer, bitmap_layer_get_layer(back_layer));
 	splash_layer=bitmap_layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
+	if(!splash)
+		splash=gbitmap_create_with_resource(RESOURCE_ID_SPLASH);
 	bitmap_layer_set_bitmap(splash_layer, splash);
 	layer_add_child(window_layer, bitmap_layer_get_layer(splash_layer));
+}
+
+static void drawWorld(Window *window)
+{
+	world_layer=bitmap_layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
+	layer_add_child(window_layer, bitmap_layer_get_layer(world_layer));
 }
 
 static void drawCalendar(Window* window)
@@ -815,7 +929,7 @@ static void weatherSync()
 {
 	time_t t=time(NULL);
   Tuplet initial_values[] = {
-    TupletCString(WEATHER_CITY, "Weather Loading..."),
+    TupletCString(WEATHER_CITY, "Loading..."),
     TupletInteger(WEATHER_TEMPERATURE, 0),
     TupletInteger(WEATHER_ICON, (uint8_t) 1),
 		TupletInteger(WEATHER_MIN, 0),
@@ -849,7 +963,7 @@ static void weatherSync()
 		TupletInteger(WEATHER_DATE5, t+(secInDay*4)),
 		TupletInteger(WEATHER_SUNRISE, 0),
 		TupletInteger(WEATHER_SUNSET, 0),
-//		TupletInteger(TIMEZONE, 0),
+		TupletInteger(TIMEZONE, 0),
 		TupletInteger(MOON, -1),
 		TupletCString(PHASE, "-"),
 		TupletCString(ZODIAC, "-"),
@@ -959,6 +1073,7 @@ static void window_load(Window *window)
 	drawBluetooth(window);
 	drawVibe(window);
 	drawCompass(window);
+	drawWorld(window);
 //	drawPedometer(window);
 
 	showTapPage(0);
@@ -986,7 +1101,6 @@ static void window_unload(Window *window)
 
 static void init(void) 
 {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init");
 	hasColor=0;
 #ifdef PBL_COLOR
 	hasColor=1;
@@ -1006,8 +1120,8 @@ static void init(void)
   window_set_background_color(window, GColorBlack);
 	window_layer=window_get_root_layer(window);
 	{
-					back=gbitmap_create_with_resource(RESOURCE_ID_BACK);
-					splash=gbitmap_create_with_resource(RESOURCE_ID_SPLASH);
+//					back=gbitmap_create_with_resource(RESOURCE_ID_BACK);
+					//splash=gbitmap_create_with_resource(RESOURCE_ID_SPLASH);
 
 					uint32_t batImages[11]={
 									RESOURCE_ID_BATTERY_0, RESOURCE_ID_BATTERY_10, RESOURCE_ID_BATTERY_20, 
@@ -1043,13 +1157,10 @@ static void init(void)
   });
   const int inbound_size = sizeof(sync_buffer);
   const int outbound_size = sizeof(sync_buffer);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init0");
   app_message_open(inbound_size, outbound_size);
 
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init1");
   window_stack_push(window, animated);
 	weatherSync();
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init2");
 }
 
 static void deinit(void)
