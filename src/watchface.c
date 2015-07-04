@@ -72,30 +72,30 @@
 #define WEATHERTIMER 30*60
 #define FORECASTDAYS 5
 
-char str_time[10];
-char str_date[14];
-char str_sec[4];
-float tz=0;	//GMT
-int showsec=1;
-int moonpct=-1;
-GFont *timeF=NULL;
-GFont *secF=NULL;
-GFont *dateF=NULL;
-GFont *calHeadF=NULL;
-GFont *calDayF=NULL;
-GFont *calNowF=NULL;
-GFont *tinyF=NULL;
-GFont *medF=NULL;
-GFont *medBF=NULL;
-uint32_t phaseImages[11]={
+static char str_time[10];
+static char str_date[14];
+static char str_sec[4];
+static float tz=0;	//GMT
+static int showsec=1;
+static int moonpct=-1;
+static GFont *timeF=NULL;
+static GFont *secF=NULL;
+static GFont *dateF=NULL;
+static GFont *calHeadF=NULL;
+static GFont *calDayF=NULL;
+static GFont *calNowF=NULL;
+static GFont *tinyF=NULL;
+static GFont *medF=NULL;
+static GFont *medBF=NULL;
+static uint32_t phaseImages[11]={
 									RESOURCE_ID_PHASE_0, RESOURCE_ID_PHASE_10, RESOURCE_ID_PHASE_20, 
 									RESOURCE_ID_PHASE_30, RESOURCE_ID_PHASE_40, RESOURCE_ID_PHASE_50, 
 									RESOURCE_ID_PHASE_60, RESOURCE_ID_PHASE_70, RESOURCE_ID_PHASE_80, 
 									RESOURCE_ID_PHASE_90, RESOURCE_ID_PHASE_100 };
 
 
-int tapPage=0;
-bool useFahrenheit=true;
+static int tapPage=0;
+//static bool useFahrenheit=true;
 static GBitmap *bat[11];
 static GBitmap *charge=NULL;
 static GBitmap *bton=NULL;
@@ -111,17 +111,16 @@ static GBitmap *compass_imageb=NULL;
 static GBitmap *compass_imagew=NULL;
 static GBitmap *moon=NULL;
 static GBitmap *world=NULL;
-static GBitmap *worldnight=NULL;
 static Window *window=NULL;
 static Layer *window_layer=NULL;
 static Layer *weather_layer=NULL;
 static Layer *weather_detail_layer=NULL;
 static Layer *compass_layer=NULL;
 static TextLayer *update_time_layer=NULL;
-char str_updatetime[25];
-char cityField[25];
-char zodiacField[25];
-char phaseField[25];
+static char str_updatetime[25];
+static char cityField[25];
+static char zodiacField[25];
+static char phaseField[25];
 static TextLayer *time_layer=NULL;
 static TextLayer *sec_layer=NULL;
 static TextLayer *date_layer=NULL;
@@ -137,8 +136,8 @@ static BitmapLayer *moon_layer=NULL;
 static BitmapLayer *ampm=NULL;
 static int today=0;
 static int tapsec=0;
-bool isAM=true;
-bool vibeHour=true;
+static bool isAM=true;
+static bool vibeHour=true;
 static int wetsec=0;
 static TextLayer *city_layer=NULL;
 static TextLayer *phase_layer=NULL;
@@ -158,19 +157,19 @@ static TextLayer *detailSunset;
 //static TextLayer *detailHumidity;
 //static TextLayer *detailPrecipitation;
 static BitmapLayer *forecastIcon[FORECASTDAYS];
-char temp[FORECASTDAYS][16];
-char sunrise[20];
-char sunset[20];
-//char humidity[16];
-char precip[16];
-char min[FORECASTDAYS][16];
-char max[FORECASTDAYS][16];
+static char temp[FORECASTDAYS][16];
+static char sunrise[20];
+static char sunset[20];
+//static char humidity[16];
+//static char precip[16];
+static char min[FORECASTDAYS][16];
+static char max[FORECASTDAYS][16];
 static GBitmap *weather_icon[4];
 static AppSync sync;
 static uint8_t sync_buffer[380];
-int hasColor;
-int lat=0;
-int lon=0;
+static int hasColor;
+static int lat=0;
+static int lon=0;
 
 enum WeatherKey {
   WEATHER_CITY = 0, WEATHER_TEMPERATURE, 
@@ -247,7 +246,7 @@ static const uint32_t WEATHER_ICONS[] = {
 	RESOURCE_ID_IMAGE_EXTREME //6
 };
 
-char* dayStr[7]={"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
+static char* dayStr[7]={"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
 //  APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
@@ -481,8 +480,8 @@ static void handle_compass(CompassHeadingData d)
 static void draw_earth() {
 
   #ifdef PBL_PLATFORM_APLITE 
-  //APPLITE
   int time_offset=(tz)*-3600; 
+  //APPLITE
   int now = (int)time(NULL) + time_offset;
   float day_of_year; // value from 0 to 1 of progress through a year
   float time_of_day; // value from 0 to 1 of progress through a day
@@ -525,15 +524,123 @@ static void draw_earth() {
 			}
     }
   }
-  layer_mark_dirty(bitmap_layer_get_layer(world_layer));
+//  layer_mark_dirty(bitmap_layer_get_layer(world_layer));
   #else
   //BASALT
+  layer_mark_dirty(bitmap_layer_get_layer(world_layer));
   #endif
   //
 }
 
+#ifdef PBL_COLOR
 
-inline static void showTapPage(int pg)
+static void getARGB(int *a, int *r, int *g, int *b, uint8_t c)
+{
+	*a=(0b11000000&c)/64*256/4;	
+	*r=(0b00110000&c)/16*256/4;	
+	*g=(0b00001100&c)/4*256/4;	
+	*b=(0b00000011&c)*256/4;	
+}
+
+static uint8_t lighten(uint8_t c)
+{
+	int a,r,g,b;
+	getARGB(&a, &r, &g, &b, c);
+	float mul=1.5;
+	r=(int)(r*mul);g=(int)(g*mul);b=(int)(b*mul);
+	if(r>255)
+		r=255;
+	if(g>255)
+		g=255;
+	if(b>255)
+		b=255;
+	return GColorFromRGBA(r, g, b, a).argb;
+}
+
+static uint8_t darken(uint8_t c)
+{
+	int a,r,g,b;
+	getARGB(&a, &r, &g, &b, c);
+	float mul=.5;
+	r=(int)(r*mul);g=(int)(g*mul);b=(int)(b*mul);
+	if(r>255)
+		r=255;
+	if(g>255)
+		g=255;
+	if(b>255)
+		b=255;
+	return GColorFromRGBA(r, g, b, a).argb;
+
+}
+
+
+static void draw_earth_color(struct Layer *layer, GContext *ctx) {
+  int time_offset=0;//(tz+6)*-3600; 
+    //if (redraw_counter < REDRAW_INTERVAL) {
+    // GBitmap *fb = graphics_capture_frame_buffer_format(ctx, GBitmapFormat8Bit);// 
+    // graphics_draw_bitmap_in_rect(ctx, fb,GRect(0, 0, 144, 72));
+    //}else {
+    //redraw_counter = 0;
+
+				graphics_draw_bitmap_in_rect(ctx, world, GRect(0, 0, wetW, wetH));
+        int now2 = (int)time(NULL) + time_offset;
+  
+        float day_of_year; // value from 0 to 1 of progress through a year
+        float time_of_day; // value from 0 to 1 of progress through a day
+        // approx number of leap years since epoch
+        // = now / SECONDS_IN_YEAR * .24; (.24 = average rate of leap years)
+        int leap_years = (int)((float)now2 / 131487192.0);
+        // day_of_year is an estimate, but should be correct to within one day
+        day_of_year = now2 - (((int)((float)now2 / 31556926.0) * 365 + leap_years) * 86400);
+        day_of_year = day_of_year / 86400.0;
+        time_of_day = day_of_year - (int)day_of_year;
+        day_of_year = day_of_year / 365.0;
+        // ##### calculate the position of the sun
+        // left to right of world goes from 0 to 65536
+        int sun_x = (int)((float)TRIG_MAX_ANGLE * (1.0 - time_of_day));
+        // bottom to top of world goes from -32768 to 32768
+        // 0.2164 is march 20, the 79th day of the year, the march equinox
+        // Earth's inclination is 23.4 degrees, so sun should vary 23.4/90=.26 up and down
+        int sun_y = -sin_lookup((day_of_year - 0.2164) * TRIG_MAX_ANGLE) * .26 * .25;
+        // ##### draw the bitmap
+        int x, y;
+
+        #define WINDOW_WIDTH 144 
+        static GBitmap *bb;
+				bb = gbitmap_create_with_resource(RESOURCE_ID_WORLDNIGHT);//CLR64);//NIGHT_PBL);
+        uint8_t *background_data = gbitmap_get_data(bb); 
+        uint8_t (*background_matrix)[WINDOW_WIDTH] = (uint8_t (*)[WINDOW_WIDTH]) background_data;
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "pointers: %d %d %d", (int)bb, (int)background_data, (int)background_matrix);
+  
+        GBitmap *fb = graphics_capture_frame_buffer_format(ctx, GBitmapFormat8Bit);//
+        uint8_t *fb_data = gbitmap_get_data(fb);   
+        uint8_t (*fb_matrix)[WINDOW_WIDTH] = (uint8_t (*)[WINDOW_WIDTH]) fb_data;
+  
+        for(x = 0; x < 144; x++) {
+          int x_angle = (int)((float)TRIG_MAX_ANGLE * (float)x / (float)(144));
+           for(y = 0; y < 72; y++) {
+              int y_angle = (int)((float)TRIG_MAX_ANGLE * (float)y / (float)(72 * 2)) - TRIG_MAX_ANGLE/4;
+              // spherical law of cosines
+              float angle = ((float)sin_lookup(sun_y)/(float)TRIG_MAX_RATIO) * ((float)sin_lookup(y_angle)/(float)TRIG_MAX_RATIO);
+              angle = angle + ((float)cos_lookup(sun_y)/(float)TRIG_MAX_RATIO) * ((float)cos_lookup(y_angle)/(float)TRIG_MAX_RATIO) * ((float)cos_lookup(sun_x - x_angle)/(float)TRIG_MAX_RATIO);
+              if (angle > 0) { //^ (0x1 & (((char *)world_bitmap->addr)[byte] >> (x % 8)))) {
+                // white pixel
+              } else {
+                // black pixel
+								if(y<64)
+                	fb_matrix[y+wetY][x] = darken(fb_matrix[y+wetY][x]);//background_matrix[y][x];
+              }
+          }
+        }
+        graphics_release_frame_buffer(ctx,fb);
+        gbitmap_destroy(bb);
+      //}
+}
+#endif
+
+
+static void showTapPage(int pg)
 {
 	int l0=true;
 	int l1=true;
@@ -557,11 +664,6 @@ inline static void showTapPage(int pg)
 			gbitmap_destroy(world);
 			world=NULL;
 		}
-		if(worldnight)
-		{
-			gbitmap_destroy(worldnight);
-			worldnight=NULL;
-		}
 	}
 	switch(pg)
 	{
@@ -583,9 +685,6 @@ inline static void showTapPage(int pg)
 		case 3:
 		{
 				world=gbitmap_create_with_resource(RESOURCE_ID_WORLD);
-#ifdef PBL_COLOR
-				worldnight=gbitmap_create_with_resource(RESOURCE_ID_WORLDNIGHT);
-#endif
 			l3=false;
 			draw_earth();
 			bitmap_layer_set_bitmap(world_layer, world);
@@ -771,6 +870,9 @@ static void drawWorld(Window *window)
 {
 	world_layer=bitmap_layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
 	layer_add_child(window_layer, bitmap_layer_get_layer(world_layer));
+#ifdef PBL_COLOR
+  layer_set_update_proc(bitmap_layer_get_layer(world_layer), draw_earth_color);
+#endif
 }
 
 static void drawCalendar(Window* window)
