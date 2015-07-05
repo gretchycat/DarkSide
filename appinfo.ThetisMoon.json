@@ -4,8 +4,8 @@
   "longName": "ThetisMoon",
 	"capabilities": [ "configurable" ],
   "companyName": "Gretchen Maculo",
-  "versionCode": 270,
-  "versionLabel": "2.7",
+  "versionCode": 280,
+  "versionLabel": "2.8",
   "watchapp": {
     "watchface": true
   },
