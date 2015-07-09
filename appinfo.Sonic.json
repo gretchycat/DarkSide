@@ -1,11 +1,11 @@
 {
-  "uuid": "UUID",
+  "uuid": "971f48bf-f215-454e-8cad-8b6949c62f26",
   "shortName": "Sonic",
   "longName": "Sonic",
 	"capabilities": [ "configurable" ],
   "companyName": "Gretchen Maculo",
-  "versionCode": 270,
-  "versionLabel": "2.7",
+  "versionCode": 280,
+  "versionLabel": "2.8",
   "watchapp": {
     "watchface": true
   },
