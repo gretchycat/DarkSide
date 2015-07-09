@@ -1,0 +1,7 @@
+
+# Ignore build generated files
+build
+.DS_Store
+*.pbw
+.lock-waf_*_build
+pebble-screenshot_*.png
