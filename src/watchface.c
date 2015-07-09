@@ -1,76 +1,7 @@
-#include <pebble.h>
 #include <math.h>
 #include <string.h>
-
-#define bounds layer_get_bounds(window_get_root_layer(window))
-#define secInDay 60*60*24
-#define SYNC_ERROR_TIMEOUT 60*1
-#define timeX 0
-#define timeY 1
-#define timeW 103
-#define timeH 31
-#define timeA GTextAlignmentCenter
-#define timeFormat "%l:%M"
-#define timeFormat24 "%H:%M"
-#define secX (timeW+timeX)
-#define secY (6+timeY)
-#define secW (144-secX)
-#define secH 25+5
-#define secA GTextAlignmentCenter
-#define secFormat "%P"
-#define secFormat24 "%S"
-#define ms 28
-#define dateX 3
-#define dateY (timeY+timeH+3)
-#define dateW (bounds.size.w-(2*dateX))
-#define dateH 20
-#define dateA GTextAlignmentCenter
-#define dateFormat "%m/%d/%Y"
-#define dateFormat24 "%m/%d/%Y"
-#define updateTimeFormat "Updated: %l:%M:%S %p"// %m/%d/%Y"
-#define updateTimeFormat24 "Updated: %H:%M:%S"// %m/%d/%Y"
-#define sunriseTimeFormat "%l:%M:%S %p"// %m/%d/%Y"
-#define sunriseTimeFormat24 "%H:%M:%S"// %m/%d/%Y"
-#define sunsetTimeFormat "%l:%M:%S %p"// %m/%d/%Y"
-#define sunsetTimeFormat24 "%H:%M:%S"// %m/%d/%Y"
-
-#define chargeW 8
-#define chargeH 8
-#define chargeX (144-chargeW)
-#define chargeY batY
-
-#define batW 16
-#define batH 8
-#define batX (144-batW-chargeW-1)
-#define batY 1
-
-#define btW 15
-#define btH 8
-#define btX (144-batW-btW-chargeW-2)
-#define btY batY
-
-#define vbW 12
-#define vbH 8
-#define vbX (144-vbW-batW-btW-chargeW-2)
-#define vbY batY
-
-#define wetX 0
-#define wetY (dateY+dateH+2)
-#define wetW bounds.size.w
-#define wetH 64
-
-#define calX 0
-#define calY (wetY+wetH+2)
-#define calW bounds.size.w
-#define calH (168-calY)
-#define calR 3
-#define calDayW ((144/7)-1)
-#define calDayH ((calH/calR)-1)
-#define calA GTextAlignmentCenter
-
-#define TAPTIMER 15
-#define WEATHERTIMER 30*60
-#define FORECASTDAYS 5
+#include <time.h>
+#include "watchface.h"
 
 static char str_time[10];
 static char str_date[14];
