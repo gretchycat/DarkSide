@@ -298,11 +298,6 @@
 				"type": "png",
 				"name": "WORLD",
 				"file": "images/DarkSide/world.png"
-			},
-			{
-				"type": "png",
-				"name": "WORLDNIGHT",
-				"file": "images/DarkSide/worldnight.png"
 			}
     ]
   },

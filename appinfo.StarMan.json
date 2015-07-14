@@ -298,11 +298,6 @@
 				"type": "png",
 				"name": "WORLD",
 				"file": "images/StarMan/world.png"
-			},
-			{
-				"type": "png",
-				"name": "WORLDNIGHT",
-				"file": "images/StarMan/worldnight.png"
 			}
     ]
   },

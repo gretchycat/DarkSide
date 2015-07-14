@@ -69,7 +69,7 @@ static int today=0;
 static int tapsec=0;
 static bool isAM=true;
 static bool vibeHour=true;
-static int wetsec=0;
+static int wetsec=0;//WEATHERTIMER;
 static TextLayer *city_layer=NULL;
 static TextLayer *phase_layer=NULL;
 static TextLayer *zodiac_layer=NULL;
@@ -98,7 +98,6 @@ static char max[FORECASTDAYS][16];
 static GBitmap *weather_icon[4];
 static AppSync sync;
 static uint8_t sync_buffer[380];
-static int hasColor;
 static int lat=0;
 static int lon=0;
 
@@ -179,13 +178,13 @@ static const uint32_t WEATHER_ICONS[] = {
 
 static char* dayStr[7]={"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 
-static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
+void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
 //  APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
 	strcpy(cityField, "Sync Error");
 	wetsec=SYNC_ERROR_TIMEOUT;
 }
 
-static void handle_vibe(bool vibe) 
+void handle_vibe(bool vibe) 
 {
 	if(vibe)
 		bitmap_layer_set_bitmap(vb_layer, vbon);
@@ -194,7 +193,7 @@ static void handle_vibe(bool vibe)
 }
 
 
-static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) 
+void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) 
 {
   switch (key) 
 	{
@@ -236,18 +235,9 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 			break;
 		case MOON:
 			moonpct=(int)new_tuple->value->int32;
-			if(moonpct==-1)
-			{
-				if(moon)
-					gbitmap_destroy(moon);
-				moon=gbitmap_create_with_resource(phaseImages[wetsec%10]);
-			}
-			else
-			{
-				if(moon)
-					gbitmap_destroy(moon);
-				moon=gbitmap_create_with_resource(phaseImages[moonpct/10]);
-			}
+			if(moon)
+				gbitmap_destroy(moon);
+			moon=gbitmap_create_with_resource(phaseImages[moonpct/10]);
 			if(moon)
 				bitmap_layer_set_bitmap(moon_layer, moon);
 			break;
@@ -312,7 +302,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 		text_layer_set_text(update_time_layer, str_updatetime);
 }
 
-static void refreshTime(struct tm *tm)
+void refreshTime(struct tm *tm)
 {
 	isAM=(tm->tm_hour<12);
 	if(clock_is_24h_style())
@@ -331,7 +321,7 @@ static void refreshTime(struct tm *tm)
 //		APP_LOG(APP_LOG_LEVEL_INFO, "T:'%s' S:'%s' D:'%s'", str_time,str_sec, str_date);
 }
 
-static void updateTime()
+void updateTime()
 {
   text_layer_set_text(time_layer, str_time);
 	if(isAM)
@@ -341,24 +331,18 @@ static void updateTime()
 	layer_set_hidden(bitmap_layer_get_layer(ampm), clock_is_24h_style());
 }
 
-static void updateSec()
+void updateSec()
 {
 	layer_set_hidden(text_layer_get_layer(sec_layer), !showsec);
   text_layer_set_text(sec_layer, str_sec);
-	if(moonpct==-1)
-	{
-		if(moon)
-			bitmap_layer_set_bitmap(moon_layer, moon);
-	}
-
 }
 
-static void updateDate()
+void updateDate()
 {
   text_layer_set_text(date_layer, str_date);
 }
 
-static void drawTime(Window* window)
+void drawTime(Window* window)
 {
   time_layer = text_layer_create((GRect) { .origin = { timeX, timeY }, .size = { timeW, timeH } });
 	text_layer_set_text_color(time_layer, GColorWhite);
@@ -371,7 +355,7 @@ static void drawTime(Window* window)
   layer_add_child(window_layer, bitmap_layer_get_layer(ampm));
 }
 
-static void drawSec(Window* window)
+void drawSec(Window* window)
 {
   sec_layer = text_layer_create((GRect) { .origin = { secX, secY }, .size = { secW, secH } });
 	text_layer_set_text_color(sec_layer, GColorWhite);
@@ -382,7 +366,7 @@ static void drawSec(Window* window)
   layer_add_child(window_layer, text_layer_get_layer(sec_layer));
 }
 
-static void drawDate(Window* window)
+void drawDate(Window* window)
 {
   date_layer = text_layer_create((GRect) { .origin = { dateX, dateY }, .size = { dateW, dateH } });
 	text_layer_set_text_color(date_layer, GColorWhite);
@@ -393,14 +377,14 @@ static void drawDate(Window* window)
   layer_add_child(window_layer, text_layer_get_layer(date_layer));
 }
 
-static void handle_battery(BatteryChargeState charge_state)
+void handle_battery(BatteryChargeState charge_state)
 {
 	int pct=charge_state.charge_percent/10;
 	bitmap_layer_set_bitmap(bat_layer, bat[pct]);
 	layer_set_hidden(bitmap_layer_get_layer(charge_layer), !charge_state.is_charging);
 }
 
-static void handle_compass(CompassHeadingData d)
+void handle_compass(CompassHeadingData d)
 {
 	if(tapPage==4)
 	{
@@ -408,7 +392,7 @@ static void handle_compass(CompassHeadingData d)
 	}
 }
 
-static void draw_earth() {
+void draw_earth() {
 
   #ifdef PBL_PLATFORM_APLITE 
   int time_offset=(tz)*-3600; 
@@ -435,6 +419,10 @@ static void draw_earth() {
 	int w=144;
 	int h=72;
   int x, y;
+//	if(!world)
+//	{		
+//			world=gbitmap_create_with_resource(RESOURCE_ID_WORLD);
+//	}
   for(x = 0; x < w; x++) {
     int x_angle = (int)((float)TRIG_MAX_ANGLE * (float)x / (float)(w));
     for(y = 0; y < h; y++) {
@@ -464,8 +452,8 @@ static void draw_earth() {
 }
 
 #ifdef PBL_COLOR
-
-static void getARGB(int *a, int *r, int *g, int *b, uint8_t c)
+///*
+void getARGB(int *a, int *r, int *g, int *b, uint8_t c)
 {
 	*a=(0b11000000&c)/64*256/4;	
 	*r=(0b00110000&c)/16*256/4;	
@@ -492,7 +480,7 @@ static uint8_t darken(uint8_t c)
 {
 	int a,r,g,b;
 	getARGB(&a, &r, &g, &b, c);
-	float mul=.5;
+	float mul=.45;
 	r=(int)(r*mul);g=(int)(g*mul);b=(int)(b*mul);
 	if(r>255)
 		r=255;
@@ -505,14 +493,17 @@ static uint8_t darken(uint8_t c)
 }
 
 
-static void draw_earth_color(struct Layer *layer, GContext *ctx) {
+void draw_earth_color(struct Layer *layer, GContext *ctx) {
   int time_offset=0;//(tz+6)*-3600; 
     //if (redraw_counter < REDRAW_INTERVAL) {
     // GBitmap *fb = graphics_capture_frame_buffer_format(ctx, GBitmapFormat8Bit);// 
     // graphics_draw_bitmap_in_rect(ctx, fb,GRect(0, 0, 144, 72));
     //}else {
     //redraw_counter = 0;
-
+//		if(!world)
+//		{
+//			world=gbitmap_create_with_resource(RESOURCE_ID_WORLD);
+//		}
 				graphics_draw_bitmap_in_rect(ctx, world, GRect(0, 0, wetW, wetH));
         int now2 = (int)time(NULL) + time_offset;
   
@@ -537,12 +528,6 @@ static void draw_earth_color(struct Layer *layer, GContext *ctx) {
         int x, y;
 
         #define WINDOW_WIDTH 144 
-        static GBitmap *bb;
-				bb = gbitmap_create_with_resource(RESOURCE_ID_WORLDNIGHT);//CLR64);//NIGHT_PBL);
-        uint8_t *background_data = gbitmap_get_data(bb); 
-        uint8_t (*background_matrix)[WINDOW_WIDTH] = (uint8_t (*)[WINDOW_WIDTH]) background_data;
-
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "pointers: %d %d %d", (int)bb, (int)background_data, (int)background_matrix);
   
         GBitmap *fb = graphics_capture_frame_buffer_format(ctx, GBitmapFormat8Bit);//
         uint8_t *fb_data = gbitmap_get_data(fb);   
@@ -565,13 +550,12 @@ static void draw_earth_color(struct Layer *layer, GContext *ctx) {
           }
         }
         graphics_release_frame_buffer(ctx,fb);
-        gbitmap_destroy(bb);
       //}
-}
+}//*/
 #endif
 
 
-static void showTapPage(int pg)
+void showTapPage(int pg)
 {
 	int l0=true;
 	int l1=true;
@@ -615,7 +599,7 @@ static void showTapPage(int pg)
 		};break;
 		case 3:
 		{
-				world=gbitmap_create_with_resource(RESOURCE_ID_WORLD);
+			world=gbitmap_create_with_resource(RESOURCE_ID_WORLD);
 			l3=false;
 			draw_earth();
 			bitmap_layer_set_bitmap(world_layer, world);
@@ -642,15 +626,15 @@ static void showTapPage(int pg)
 	tapsec=TAPTIMER;
 }
 
-static void handle_tap(AccelAxisType axis, int32_t direction)
+void handle_tap(AccelAxisType axis, int32_t direction)
 {
 	tapPage++;
-	if(tapPage>4)
-		tapPage=0;
+//	if(tapPage>4)
+		tapPage%=5;
 	showTapPage(tapPage);
 }
 
-static void tapTimer()
+void tapTimer()
 {
 	if(tapsec)
 	{
@@ -663,11 +647,12 @@ static void tapTimer()
 	}
 }
 
-static void weatherTimer()
+void weatherTimer()
 {
 	if(wetsec==0)
 	{
-		showTapPage(1);
+		tapPage=1;
+		showTapPage(tapPage);
 		wetsec=WEATHERTIMER;
   	app_message_outbox_send();
 		//weather update
@@ -685,7 +670,7 @@ time_t tomorrow(time_t t)
 	return t+(24*60*60);
 }
 
-static void updateCalendar()
+void updateCalendar()
 {
 	time_t t=time(NULL);
 	struct tm *tm=localtime(&t);
@@ -736,7 +721,7 @@ static void updateCalendar()
 	}
 }
 
-static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed)
+void handle_second_tick(struct tm* tick_time, TimeUnits units_changed)
 {
 	refreshTime(tick_time);
 	updateTime();
@@ -751,7 +736,7 @@ static void handle_second_tick(struct tm* tick_time, TimeUnits units_changed)
 	weatherTimer();
 }
 
-static void drawBattery(Window *window)
+void drawBattery(Window *window)
 {
 	bat_layer=bitmap_layer_create((GRect) { .origin = { batX, batY }, .size = { batW, batH } });
 	bitmap_layer_set_bitmap(bat_layer, bat[0]);
@@ -762,21 +747,21 @@ static void drawBattery(Window *window)
 	layer_add_child(window_layer, bitmap_layer_get_layer(charge_layer));
 }
 
-static void drawBluetooth(Window *window)
+void drawBluetooth(Window *window)
 {
 	bt_layer=bitmap_layer_create((GRect) { .origin = { btX, btY }, .size = { btW, btH } });
 	bitmap_layer_set_bitmap(bt_layer, bton);
 	layer_add_child(window_layer, bitmap_layer_get_layer(bt_layer));
 }
 
-static void drawVibe(Window *window)
+void drawVibe(Window *window)
 {
 	vb_layer=bitmap_layer_create((GRect) { .origin = { vbX, vbY }, .size = { vbW, vbH } });
 	bitmap_layer_set_bitmap(vb_layer, vbon);
 	layer_add_child(window_layer, bitmap_layer_get_layer(vb_layer));
 }
 
-static void handle_bluetooth(bool connected) 
+void handle_bluetooth(bool connected) 
 {
 	if(connected)
 		bitmap_layer_set_bitmap(bt_layer, bton);
@@ -784,12 +769,14 @@ static void handle_bluetooth(bool connected)
 		bitmap_layer_set_bitmap(bt_layer, btoff);
 }
 
-static void drawDecoration(Window *window)
+void drawDecoration(Window *window)
 {
 	back_layer=bitmap_layer_create(bounds);
 	if(back)
+	{
 		bitmap_layer_set_bitmap(back_layer, back);
-	layer_add_child(window_layer, bitmap_layer_get_layer(back_layer));
+		layer_add_child(window_layer, bitmap_layer_get_layer(back_layer));
+	}
 	splash_layer=bitmap_layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
 	if(!splash)
 		splash=gbitmap_create_with_resource(RESOURCE_ID_SPLASH);
@@ -797,7 +784,7 @@ static void drawDecoration(Window *window)
 	layer_add_child(window_layer, bitmap_layer_get_layer(splash_layer));
 }
 
-static void drawWorld(Window *window)
+void drawWorld(Window *window)
 {
 	world_layer=bitmap_layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
 	layer_add_child(window_layer, bitmap_layer_get_layer(world_layer));
@@ -806,7 +793,7 @@ static void drawWorld(Window *window)
 #endif
 }
 
-static void drawCalendar(Window* window)
+void drawCalendar(Window* window)
 {
 	time_t t=time(NULL);
 	struct tm *tm=localtime(&t);
@@ -874,7 +861,7 @@ static void drawCalendar(Window* window)
 	}
 }
 
-static void drawWeather(Window* window)
+void drawWeather(Window* window)
 {
 	weather_layer=layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
 	layer_add_child(window_layer, weather_layer);
@@ -931,7 +918,7 @@ static void drawWeather(Window* window)
 	}
 }
 
-static void weatherSync()
+void weatherSync()
 {
 	time_t t=time(NULL);
   Tuplet initial_values[] = {
@@ -984,7 +971,7 @@ static void weatherSync()
 	//send_cmd();
 }
 
-static void drawWeatherDetail(Window* window)
+void drawWeatherDetail(Window* window)
 {
 	weather_detail_layer=layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
 	layer_add_child(window_layer, weather_detail_layer);
@@ -996,10 +983,11 @@ static void drawWeatherDetail(Window* window)
   layer_add_child(weather_detail_layer, text_layer_get_layer(update_time_layer));	
 
 	riseset_layer=bitmap_layer_create((GRect) { .origin = { 144/2-29-15, 12 }, .size = { 29, 20 } });
-	if(hasColor)
+	#ifdef PBL_COLOR
 		bitmap_layer_set_compositing_mode(riseset_layer, GCompOpSet);
-	else
+	#else
 		bitmap_layer_set_compositing_mode(riseset_layer, GCompOpOr);
+	#endif
 	bitmap_layer_set_bitmap(riseset_layer, riseset);
 	layer_add_child(weather_detail_layer, bitmap_layer_get_layer(riseset_layer));	
 
@@ -1017,8 +1005,6 @@ static void drawWeatherDetail(Window* window)
   text_layer_set_text_alignment(detailSunset, GTextAlignmentLeft);
   layer_add_child(weather_detail_layer, text_layer_get_layer(detailSunset));
 	moon_layer=bitmap_layer_create((GRect) { .origin = { 4, 35 }, .size = { ms, ms } });
-	if(moon)
-		bitmap_layer_set_bitmap(moon_layer, moon);
 	layer_add_child(weather_detail_layer, bitmap_layer_get_layer(moon_layer));	
 
   phase_layer = text_layer_create(GRect(4+ms, 35, 144-ms-4, 16));
@@ -1037,7 +1023,7 @@ static void drawWeatherDetail(Window* window)
 
 }
 
-static void drawCompass(Window* window)
+void drawCompass(Window* window)
 {
 	int compassW=91; //sqrt((64*64)+(64*64));
 	int compassH=compassW;
@@ -1047,11 +1033,11 @@ static void drawCompass(Window* window)
 	layer_add_child(window_layer, compass_layer);
 	compass_image_layerw=rot_bitmap_layer_create(compass_imagew);
 	compass_image_layerb=bitmap_layer_create((GRect) { .origin = { 0, 0 }, .size = { compassW, compassH } });
-	if(hasColor)
+	#ifdef PBL_COLOR
 	{
 		rot_bitmap_set_compositing_mode(compass_image_layerw, GCompOpSet);
 	}
-	else
+	#else
 	{
 		if(compass_imageb)
 		{
@@ -1061,10 +1047,11 @@ static void drawCompass(Window* window)
 		}
 		rot_bitmap_set_compositing_mode(compass_image_layerw, GCompOpOr);
 	}
+	#endif
 	layer_add_child(compass_layer, (Layer*)(compass_image_layerw));
 }
 
-static void window_load(Window *window) 
+void window_load(Window *window) 
 {
 	drawDecoration(window);
 	time_t t=time(NULL);
@@ -1087,7 +1074,7 @@ static void window_load(Window *window)
 	handle_bluetooth(bluetooth_connection_service_peek());
 }
 
-static void window_unload(Window *window) 
+void window_unload(Window *window) 
 {
   text_layer_destroy(time_layer);
   text_layer_destroy(sec_layer);
@@ -1105,12 +1092,8 @@ static void window_unload(Window *window)
 	gbitmap_destroy(splash);
 }
 
-static void init(void) 
+void init(void) 
 {
-	hasColor=0;
-#ifdef PBL_COLOR
-	hasColor=1;
-#endif
   const bool animated = true;
 	timeF=fonts_load_custom_font((ResHandle)resource_get_handle((uint32_t)RESOURCE_ID_FONT_BEYOND_30_BOLD));
 	secF=fonts_load_custom_font((ResHandle)resource_get_handle((uint32_t)RESOURCE_ID_FONT_BEYOND_24_BOLD));
@@ -1169,7 +1152,7 @@ static void init(void)
 	weatherSync();
 }
 
-static void deinit(void)
+void deinit(void)
 {
   tick_timer_service_unsubscribe();
   battery_state_service_unsubscribe();

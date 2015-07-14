@@ -298,11 +298,6 @@
 				"type": "png",
 				"name": "WORLD",
 				"file": "images/TheEndlessRiver/world.png"
-			},
-			{
-				"type": "png",
-				"name": "WORLDNIGHT",
-				"file": "images/TheEndlessRiver/worldnight.png"
 			}
     ]
   },

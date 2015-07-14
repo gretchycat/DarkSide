@@ -298,11 +298,6 @@
 				"type": "png",
 				"name": "WORLD",
 				"file": "images/ThetisMoon/world.png"
-			},
-			{
-				"type": "png",
-				"name": "WORLDNIGHT",
-				"file": "images/ThetisMoon/worldnight.png"
 			}
     ]
   },

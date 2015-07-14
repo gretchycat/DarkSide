@@ -298,11 +298,6 @@
 				"type": "png",
 				"name": "WORLD",
 				"file": "images/Minecraft/world.png"
-			},
-			{
-				"type": "png",
-				"name": "WORLDNIGHT",
-				"file": "images/Minecraft/worldnight.png"
 			}
     ]
   },
