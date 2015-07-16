@@ -336,23 +336,14 @@ function convertTemp(t)
 	return parseInt(t);
 }
 
-function fetchWeather(latitude, longitude) 
+function fetchCalculated()
 {
 	initialize();
 	calculate();
-  var response;
-	var responseW;
-	var responseH;
-  var req = new XMLHttpRequest();
-  var reqW = new XMLHttpRequest();
-  var reqH = new XMLHttpRequest();
-	var data={ "ct":"None" };
-	data["mn"]=MOONPCT;
+
+	var data={ "mn":MOONPCT};
 	data["ps"]=Phase;
 	data["zd"]=Zodiac;
-	data["lt"]=parseInt(latitude);
-	data["ln"]=parseInt(longitude);
-
 	if(localStorage.getItem(SHOWSEC)==='y')
 		showSec=1;
 	if(localStorage.getItem(SHOWSEC)==='Y')
@@ -369,10 +360,28 @@ function fetchWeather(latitude, longitude)
 		vibeHour=0;
 	data["vb"]=vibeHour;
 
-
 	var offset = new Date().getTimezoneOffset()*60;
 	data['tz']=offset;
-	var url="http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=5&mode=json";
+	console.log("To Pebble: ("+JSON.stringify(data).length+") "+JSON.stringify(data));
+	Pebble.sendAppMessage(data);
+	
+}
+
+function fetchWeather(latitude, longitude) 
+{
+	var offset = new Date().getTimezoneOffset()*60;
+  var response;
+	var responseW;
+	var responseH;
+  var req = new XMLHttpRequest();
+  var reqW = new XMLHttpRequest();
+  var reqH = new XMLHttpRequest();
+	var data={ "ct":"None" };
+	data["lt"]=parseInt(latitude);
+	data["ln"]=parseInt(longitude);
+
+
+var url="http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=5&mode=json";
 	console.log("Connecting to: "+url);
 	req.open('GET', url, false);
   req.onload = function(e)
@@ -427,8 +436,7 @@ function fetchWeather(latitude, longitude)
 								data["ss"]=responseW.sys.sunset-offset;
 				}
 				console.log("To Pebble: ("+JSON.stringify(data).length+") "+JSON.stringify(data));
-		//		if(data["ct"]!="None")
-						Pebble.sendAppMessage(data);
+				Pebble.sendAppMessage(data);
 			}
 		}
 	}
@@ -456,6 +464,7 @@ var locationOptions = { "timeout": 15000, "maximumAge": 1800000 };
 
 Pebble.addEventListener("ready",
                         function(e) {
+													fetchCalculated();
                           console.log("connected: " + e);
                           locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
                           console.log(e.type);
@@ -463,6 +472,7 @@ Pebble.addEventListener("ready",
 
 Pebble.addEventListener("appmessage",
                         function(e) {
+													fetchCalculated();
                           locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
                           console.log(e.type);
                           console.log(e.payload.temperature);
@@ -478,6 +488,7 @@ Pebble.addEventListener("webviewclosed",
 													localStorage.setItem(SHOWSEC, r.showSec);
 													localStorage.setItem(VIBEHOUR, r.vibeHour);
 													localStorage.setItem(TEMPSCALE, r.unit);
+													fetchCalculated();
                           locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
                         });
 
