@@ -5,3 +5,5 @@ build
 *.pbw
 .lock-waf_*_build
 pebble-screenshot_*.png
+*.swp
+src/defines.h

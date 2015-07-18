@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include "defines.h"
 #include "watch.h"
 #include "sec.h"
 #include "date.h"

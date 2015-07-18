@@ -2,6 +2,7 @@
 #include <string.h>
 #include <time.h>
 #include "watchface.h"
+#include "defines.h"
 
 static char str_time[10];
 static char str_date[14];
@@ -345,7 +346,7 @@ void updateDate()
 void drawTime(Window* window)
 {
   time_layer = text_layer_create((GRect) { .origin = { timeX, timeY }, .size = { timeW, timeH } });
-	text_layer_set_text_color(time_layer, GColorWhite);
+	text_layer_set_text_color(time_layer, TimeColor);
 	text_layer_set_background_color(time_layer, GColorClear);
 	text_layer_set_font(time_layer, timeF); 
   text_layer_set_text_alignment(time_layer, timeA);
@@ -358,7 +359,7 @@ void drawTime(Window* window)
 void drawSec(Window* window)
 {
   sec_layer = text_layer_create((GRect) { .origin = { secX, secY }, .size = { secW, secH } });
-	text_layer_set_text_color(sec_layer, GColorWhite);
+	text_layer_set_text_color(sec_layer, SecondColor);
 	text_layer_set_background_color(sec_layer, GColorClear);
 	text_layer_set_font(sec_layer, secF); 
   text_layer_set_text_alignment(sec_layer, secA);
@@ -369,7 +370,7 @@ void drawSec(Window* window)
 void drawDate(Window* window)
 {
   date_layer = text_layer_create((GRect) { .origin = { dateX, dateY }, .size = { dateW, dateH } });
-	text_layer_set_text_color(date_layer, GColorWhite);
+	text_layer_set_text_color(date_layer, DateColor);
 	text_layer_set_background_color(date_layer, GColorClear);
 	text_layer_set_font(date_layer, dateF); 
   text_layer_set_text_alignment(date_layer, dateA);
@@ -686,18 +687,14 @@ void updateCalendar()
 		{
 			struct tm *time=localtime(&t); 
 			int dayField=time->tm_mday;
-			GColor fg=GColorBlack;
-			GColor bg=GColorWhite;
-			GColor hfg=GColorWhite;
-#ifdef PBL_COLOR
-			GColor hbg=GColorDarkCandyAppleRed;
-#else
-			GColor hbg=GColorBlack;
-#endif
+			GColor fg=CalendarFGColor;
+			GColor bg=CalendarBGColor;
+			GColor hfg=CalendarSelFGColor;
+			GColor hbg=CalendarSelBGColor;
 			if(!row)
 			{
-				fg=GColorWhite;
-				bg=GColorBlack;
+				fg=CalendarHeadFGColor;
+				bg=CalendarHeadBGColor;
 			}
 			if(dayField==today)
 			{
@@ -818,18 +815,18 @@ void drawCalendar(Window* window)
 			int x=(144/7)*day+calX+r;
 			int y=(calH/calR)*row+calY;
 			calendar[day][row]=text_layer_create((GRect) { .origin = { x, y }, .size = { calDayW, calDayH } });
-			GColor fg=GColorBlack;
-			GColor bg=GColorWhite;
-			GColor hfg=GColorWhite;
+			GColor fg=CalendarFGColor;
+			GColor bg=CalendarBGColor;
+			GColor hfg=CalendarSelFGColor;
 #ifdef PBL_COLOR
-			GColor hbg=GColorDarkCandyAppleRed;
+			GColor hbg=CalendarSelBGColor;
 #else
 			GColor hbg=GColorBlack;
 #endif
 			if(!row)
 			{
-				fg=GColorWhite;
-				bg=GColorBlack;
+				fg=CalendarHeadFGColor;
+				bg=CalendarHeadBGColor;
 			}
 			
 			text_layer_set_text_color(calendar[day][row], fg);
@@ -876,14 +873,14 @@ void drawWeather(Window* window)
 	icon_layer = bitmap_layer_create(GRect(144-tempWidth-16, 0, 15, 15));
   layer_add_child(weather_layer, bitmap_layer_get_layer(icon_layer));
   temperature_layer = text_layer_create(GRect(144-tempWidth, 0, tempWidth, 16));
-  text_layer_set_text_color(temperature_layer, GColorWhite);
+  text_layer_set_text_color(temperature_layer, WeatherTempNowColor);
   text_layer_set_background_color(temperature_layer, GColorClear);
   text_layer_set_font(temperature_layer, medF);
   text_layer_set_text_alignment(temperature_layer, GTextAlignmentCenter);
   layer_add_child(weather_layer, text_layer_get_layer(temperature_layer));
 
   city_layer = text_layer_create(GRect(0, 0, 144-tempWidth-16, 16));
-  text_layer_set_text_color(city_layer, GColorWhite);
+  text_layer_set_text_color(city_layer, WeatherCityColor);
   text_layer_set_background_color(city_layer, GColorClear);
   text_layer_set_font(city_layer, tinyF);
   text_layer_set_text_alignment(city_layer, GTextAlignmentCenter);
@@ -899,7 +896,7 @@ void drawWeather(Window* window)
 		layer_add_child(weather_layer, bitmap_layer_get_layer(forecastIcon[x]));
 
 		forecastDay[x]=text_layer_create(GRect(x*w+r, 14, w, 14));
-		text_layer_set_text_color(forecastDay[x], GColorWhite);
+		text_layer_set_text_color(forecastDay[x], WeatherDaysColor);
 		text_layer_set_background_color(forecastDay[x], GColorClear);
 		text_layer_set_font(forecastDay[x], tinyF);
 		text_layer_set_text_alignment(forecastDay[x], GTextAlignmentCenter);
@@ -907,7 +904,7 @@ void drawWeather(Window* window)
 		layer_add_child(weather_layer, text_layer_get_layer(forecastDay[x]));
 
 		tempMin[x]=text_layer_create(GRect(x*w+r, 54, w, 14));
-		text_layer_set_text_color(tempMin[x], GColorWhite);
+		text_layer_set_text_color(tempMin[x], WeatherTempLowColor);
 		text_layer_set_background_color(tempMin[x], GColorClear);
 		text_layer_set_font(tempMin[x], tinyF);
 		text_layer_set_text_alignment(tempMin[x], GTextAlignmentCenter);
@@ -915,7 +912,7 @@ void drawWeather(Window* window)
 		layer_add_child(weather_layer, text_layer_get_layer(tempMin[x]));
 
 		tempMax[x]=text_layer_create(GRect(x*w+r, 42, w, 14));
-		text_layer_set_text_color(tempMax[x], GColorWhite);
+		text_layer_set_text_color(tempMax[x], WeatherTempHighColor);
 		text_layer_set_background_color(tempMax[x], GColorClear);
 		text_layer_set_font(tempMax[x], tinyF);
 		text_layer_set_text_alignment(tempMax[x], GTextAlignmentCenter);
@@ -982,7 +979,7 @@ void drawWeatherDetail(Window* window)
 	weather_detail_layer=layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
 	layer_add_child(window_layer, weather_detail_layer);
   update_time_layer = text_layer_create(GRect(0, 0, 144, 16));
-  text_layer_set_text_color(update_time_layer, GColorWhite);
+  text_layer_set_text_color(update_time_layer, UpdatedColor);
   text_layer_set_background_color(update_time_layer, GColorClear);
   text_layer_set_font(update_time_layer, tinyF);
   text_layer_set_text_alignment(update_time_layer, GTextAlignmentCenter);
@@ -998,14 +995,14 @@ void drawWeatherDetail(Window* window)
 	layer_add_child(weather_detail_layer, bitmap_layer_get_layer(riseset_layer));	
 
 	detailSunrise = text_layer_create(GRect(144/2-15, 14, 144/2, 16));
-  text_layer_set_text_color(detailSunrise, GColorWhite);
+  text_layer_set_text_color(detailSunrise, SunriseColor);
   text_layer_set_background_color(detailSunrise, GColorClear);
   text_layer_set_font(detailSunrise, tinyF);
   text_layer_set_text_alignment(detailSunrise, GTextAlignmentLeft);
   layer_add_child(weather_detail_layer, text_layer_get_layer(detailSunrise));	
 
   detailSunset = text_layer_create(GRect(144/2-15, 24, 144/2, 16));
-  text_layer_set_text_color(detailSunset, GColorWhite);
+  text_layer_set_text_color(detailSunset, SunsetColor);
   text_layer_set_background_color(detailSunset, GColorClear);
   text_layer_set_font(detailSunset, tinyF);
   text_layer_set_text_alignment(detailSunset, GTextAlignmentLeft);
@@ -1014,14 +1011,14 @@ void drawWeatherDetail(Window* window)
 	layer_add_child(weather_detail_layer, bitmap_layer_get_layer(moon_layer));	
 
   phase_layer = text_layer_create(GRect(4+ms, 35, 144-ms-4, 16));
-  text_layer_set_text_color(phase_layer, GColorWhite);
+  text_layer_set_text_color(phase_layer, PhaseColor);
   text_layer_set_background_color(phase_layer, GColorClear);
   text_layer_set_font(phase_layer, tinyF);
   text_layer_set_text_alignment(phase_layer, GTextAlignmentCenter);
   layer_add_child(weather_detail_layer, text_layer_get_layer(phase_layer));
 
   zodiac_layer = text_layer_create(GRect(4+ms, 35+14, 144-ms-4, 16));
-  text_layer_set_text_color(zodiac_layer, GColorWhite);
+  text_layer_set_text_color(zodiac_layer, ZodiacColor);
   text_layer_set_background_color(zodiac_layer, GColorClear);
   text_layer_set_font(zodiac_layer, tinyF);
   text_layer_set_text_alignment(zodiac_layer, GTextAlignmentCenter);

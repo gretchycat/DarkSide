@@ -1,0 +1,41 @@
+#ifdef PBL_COLOR
+#define CalendarFGColor GColorBlack
+#define CalendarBGColor GColorCeleste
+#define CalendarHeadFGColor GColorCeleste
+#define CalendarHeadBGColor GColorOxfordBlue
+#define CalendarSelFGColor GColorWhite
+#define CalendarSelBGColor GColorBlue
+#define TimeColor GColorCeleste
+#define SecondColor GColorCeleste
+#define DateColor GColorCeleste
+#define WeatherCityColor GColorWhite
+#define WeatherTempNowColor GColorWhite
+#define WeatherDaysColor GColorWhite
+#define WeatherTempHighColor GColorMelon
+#define WeatherTempLowColor GColorCeleste
+#define UpdatedColor GColorCeleste
+#define SunriseColor GColorPastelYellow
+#define SunsetColor GColorPictonBlue
+#define PhaseColor GColorCeleste
+#define ZodiacColor GColorCeleste
+#else
+#define CalendarFGColor GColorBlack
+#define CalendarBGColor GColorWhite
+#define CalendarHeadFGColor GColorWhite
+#define CalendarHeadBGColor GColorBlack
+#define CalendarSelFGColor GColorWhite
+#define CalendarSelBGColor GColorWhite
+#define TimeColor GColorWhite
+#define SecondColor GColorWhite
+#define DateColor GColorWhite
+#define WeatherCityColor GColorWhite
+#define WeatherTempNowColor GColorWhite
+#define WeatherDaysColor GColorWhite
+#define WeatherTempHighColor GColorWhite
+#define WeatherTempLowColor GColorWhite
+#define UpdatedColor GColorWhite
+#define SunriseColor GColorWhite
+#define SunsetColor GColorWhite
+#define PhaseColor GColorWhite
+#define ZodiacColor GColorWhite
+#endif

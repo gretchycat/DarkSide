@@ -10,6 +10,7 @@ convert ~/Downloads/$1-icon.png -dither FloydSteinberg -remap resources/images/6
 convert ~/Downloads/${1}.png -dither FloydSteinberg -remap resources/images/6bit.png resources/images/$1/darkside~color.png
 convert ~/Downloads/$1-icon.png -dither FloydSteinberg -brightness-contrast +10 -monochrome resources/images/$1/darkside-icon~bw.png
 convert ~/Downloads/${1}.png -dither FloydSteinberg -contrast +10 -monochrome resources/images/$1/darkside~bw.png
+cp src/defines/DarkSide.h src/defines/${1}.h
 pebble clean
 pebble build
 git add resources/fonts/$1
