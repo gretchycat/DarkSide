@@ -777,9 +777,15 @@ void drawDecoration(Window *window)
 		bitmap_layer_set_bitmap(back_layer, back);
 		layer_add_child(window_layer, bitmap_layer_get_layer(back_layer));
 	}
-	splash_layer=bitmap_layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
 	if(!splash)
 		splash=gbitmap_create_with_resource(RESOURCE_ID_SPLASH);
+#ifdef PBL_COLOR
+  GRect b = gbitmap_get_bounds(splash);
+#else
+  GRect b = { .origin = { 0,0 }, .size = { 144, 64 } };//splash->bounds;
+#endif
+	int h=b.size.h;
+	splash_layer=bitmap_layer_create((GRect) { .origin = { wetX, (wetY+wetH)-h }, .size = { wetW, h } });
 	bitmap_layer_set_bitmap(splash_layer, splash);
 	layer_add_child(window_layer, bitmap_layer_get_layer(splash_layer));
 }
