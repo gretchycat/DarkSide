@@ -6,8 +6,11 @@
 #define CalendarSelFGColor GColorWhite
 #define CalendarSelBGColor GColorDarkCandyAppleRed
 #define TimeColor GColorWhite
+#define TimeOutlineColor GColorBlack
 #define SecondColor GColorWhite
+#define SecondOutlineColor GColorBlack
 #define DateColor GColorWhite
+#define DateOutlineColor GColorBlack
 #define WeatherCityColor GColorWhite
 #define WeatherTempNowColor GColorWhite
 #define WeatherDaysColor GColorWhite

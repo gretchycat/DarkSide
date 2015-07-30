@@ -54,8 +54,17 @@ static char cityField[25];
 static char zodiacField[10];
 static char phaseField[18];
 static TextLayer *time_layer=NULL;
+#ifdef TimeOutlineColor
+static TextLayer *timeOutline[4];
+#endif
 static TextLayer *sec_layer=NULL;
+#ifdef SecondOutlineColor
+static TextLayer *secOutline[4];
+#endif
 static TextLayer *date_layer=NULL;
+#ifdef DateOutlineColor
+static TextLayer *dateOutline[4];
+#endif
 static TextLayer *calendar[7][calR];
 static char calDay[7][calR-1][3];
 static BitmapLayer *vb_layer=NULL;
@@ -325,6 +334,11 @@ void refreshTime(struct tm *tm)
 void updateTime()
 {
   text_layer_set_text(time_layer, str_time);
+
+	#ifdef TimeOutlineColor
+	for(int i=0;i<4;i++)
+  	text_layer_set_text(timeOutline[i], str_time);
+	#endif
 	if(isAM)
 		bitmap_layer_set_bitmap(ampm, am);
 	else
@@ -336,15 +350,48 @@ void updateSec()
 {
 	layer_set_hidden(text_layer_get_layer(sec_layer), !showsec);
   text_layer_set_text(sec_layer, str_sec);
+	#ifdef SecondOutlineColor
+	for(int i=0;i<4;i++)
+	{
+		layer_set_hidden(text_layer_get_layer(secOutline[i]), !showsec);
+  	text_layer_set_text(secOutline[i], str_sec);
+	}
+	#endif
 }
 
 void updateDate()
 {
   text_layer_set_text(date_layer, str_date);
+	#ifdef DateOutlineColor
+	for(int i=0;i<4;i++)
+  	text_layer_set_text(dateOutline[i], str_date);
+	#endif
+	
 }
 
 void drawTime(Window* window)
 {
+	#ifdef TimeOutlineColor
+	for(int i=0;i<4;i++)
+	{	
+	int sx=0;
+	int sy=0;
+		switch (i)
+		{
+			case 0:sx=timeX-1;sy=timeY-1;break;
+			case 1:sx=timeX+1;sy=timeY-1;break;
+			case 2:sx=timeX-1;sy=timeY+1;break;
+			case 3:sx=timeX+1;sy=timeY+1;break;
+		};
+		timeOutline[i] = text_layer_create((GRect) { .origin = { sx, sy }, .size = { timeW, timeH } });
+		text_layer_set_text_color(timeOutline[i], TimeOutlineColor);
+		text_layer_set_background_color(timeOutline[i], GColorClear);
+		text_layer_set_font(timeOutline[i], timeF); 
+		text_layer_set_text_alignment(timeOutline[i], timeA);
+		text_layer_set_text(timeOutline[i], str_time);
+		layer_add_child(window_layer, text_layer_get_layer(timeOutline[i]));
+	}
+	#endif
   time_layer = text_layer_create((GRect) { .origin = { timeX, timeY }, .size = { timeW, timeH } });
 	text_layer_set_text_color(time_layer, TimeColor);
 	text_layer_set_background_color(time_layer, GColorClear);
@@ -358,6 +405,28 @@ void drawTime(Window* window)
 
 void drawSec(Window* window)
 {
+	#ifdef TimeOutlineColor
+	for(int i=0;i<4;i++)
+	{	
+	int sx=0;
+	int sy=0;
+		switch (i)
+		{
+			case 0:sx=secX-1;sy=secY-1;break;
+			case 1:sx=secX+1;sy=secY-1;break;
+			case 2:sx=secX-1;sy=secY+1;break;
+			case 3:sx=secX+1;sy=secY+1;break;
+		};
+		secOutline[i] = text_layer_create((GRect) { .origin = { sx, sy }, .size = { secW, secH } });
+		text_layer_set_text_color(secOutline[i], TimeOutlineColor);
+		text_layer_set_background_color(secOutline[i], GColorClear);
+		text_layer_set_font(secOutline[i], secF); 
+		text_layer_set_text_alignment(secOutline[i], secA);
+		text_layer_set_text(secOutline[i], str_sec);
+		layer_add_child(window_layer, text_layer_get_layer(secOutline[i]));
+	}
+	#endif
+ 
   sec_layer = text_layer_create((GRect) { .origin = { secX, secY }, .size = { secW, secH } });
 	text_layer_set_text_color(sec_layer, SecondColor);
 	text_layer_set_background_color(sec_layer, GColorClear);
@@ -369,6 +438,28 @@ void drawSec(Window* window)
 
 void drawDate(Window* window)
 {
+	#ifdef TimeOutlineColor
+	for(int i=0;i<4;i++)
+	{	
+	int sx=0;
+	int sy=0;
+		switch (i)
+		{
+			case 0:sx=dateX-1;sy=dateY-1;break;
+			case 1:sx=dateX+1;sy=dateY-1;break;
+			case 2:sx=dateX-1;sy=dateY+1;break;
+			case 3:sx=dateX+1;sy=dateY+1;break;
+		};
+		dateOutline[i] = text_layer_create((GRect) { .origin = { sx, sy }, .size = { dateW, dateH } });
+		text_layer_set_text_color(dateOutline[i], TimeOutlineColor);
+		text_layer_set_background_color(dateOutline[i], GColorClear);
+		text_layer_set_font(dateOutline[i], dateF); 
+		text_layer_set_text_alignment(dateOutline[i], dateA);
+		text_layer_set_text(dateOutline[i], str_date);
+		layer_add_child(window_layer, text_layer_get_layer(dateOutline[i]));
+	}
+	#endif
+ 
   date_layer = text_layer_create((GRect) { .origin = { dateX, dateY }, .size = { dateW, dateH } });
 	text_layer_set_text_color(date_layer, DateColor);
 	text_layer_set_background_color(date_layer, GColorClear);
@@ -739,6 +830,13 @@ void drawBattery(Window *window)
 	bitmap_layer_set_bitmap(bat_layer, bat[0]);
   layer_add_child(window_layer, bitmap_layer_get_layer(bat_layer));
 	charge_layer=bitmap_layer_create((GRect) { .origin = { chargeX, chargeY }, .size = { chargeW, chargeH } });
+	#ifdef PBL_COLOR
+	{
+		bitmap_layer_set_compositing_mode(charge_layer, GCompOpSet);
+		bitmap_layer_set_compositing_mode(bat_layer, GCompOpSet);
+	}
+	#endif
+	
 	bitmap_layer_set_bitmap(charge_layer, charge);
 	layer_set_hidden(bitmap_layer_get_layer(charge_layer), true);
 	layer_add_child(window_layer, bitmap_layer_get_layer(charge_layer));
@@ -747,6 +845,12 @@ void drawBattery(Window *window)
 void drawBluetooth(Window *window)
 {
 	bt_layer=bitmap_layer_create((GRect) { .origin = { btX, btY }, .size = { btW, btH } });
+	#ifdef PBL_COLOR
+	{
+		bitmap_layer_set_compositing_mode(bt_layer, GCompOpSet);
+	}
+	#endif
+	
 	bitmap_layer_set_bitmap(bt_layer, bton);
 	layer_add_child(window_layer, bitmap_layer_get_layer(bt_layer));
 }
@@ -754,6 +858,12 @@ void drawBluetooth(Window *window)
 void drawVibe(Window *window)
 {
 	vb_layer=bitmap_layer_create((GRect) { .origin = { vbX, vbY }, .size = { vbW, vbH } });
+	#ifdef PBL_COLOR
+	{
+		bitmap_layer_set_compositing_mode(vb_layer, GCompOpSet);
+	}
+	#endif
+	
 	bitmap_layer_set_bitmap(vb_layer, vbon);
 	layer_add_child(window_layer, bitmap_layer_get_layer(vb_layer));
 }
@@ -1123,7 +1233,8 @@ void init(void)
 					for(int i=0;i<11;i++)
 									bat[i]=gbitmap_create_with_resource(batImages[i]);
 					charge=gbitmap_create_with_resource(RESOURCE_ID_CHARGE);
-					compass_imageb=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS_BACK);
+
+				compass_imageb=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS_BACK);
 					compass_imagew=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_COMPASS);
 					bton=gbitmap_create_with_resource(RESOURCE_ID_BTON);
 					btoff=gbitmap_create_with_resource(RESOURCE_ID_BTOFF);

@@ -1,13 +1,16 @@
 #ifdef PBL_COLOR
 #define CalendarFGColor GColorBlack
-#define CalendarBGColor GColorWhite
-#define CalendarHeadFGColor GColorWhite
-#define CalendarHeadBGColor GColorBulgarianRose
-#define CalendarSelFGColor GColorWhite
-#define CalendarSelBGColor GColorDarkCandyAppleRed
-#define TimeColor GColorWhite
-#define SecondColor GColorWhite
-#define DateColor GColorWhite
+#define CalendarBGColor GColorPastelYellow
+#define CalendarHeadFGColor GColorPastelYellow
+#define CalendarHeadBGColor GColorDukeBlue
+#define CalendarSelFGColor GColorBlack
+#define CalendarSelBGColor GColorVividCerulean
+#define TimeColor GColorPastelYellow
+#define TimeOutlineColor GColorBlack
+#define SecondColor GColorPastelYellow
+#define SecondOutlineColor GColorBlack
+#define DateColor GColorPastelYellow
+#define DateOutlineColor GColorBlack
 #define WeatherCityColor GColorWhite
 #define WeatherTempNowColor GColorWhite
 #define WeatherDaysColor GColorWhite
