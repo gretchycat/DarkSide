@@ -4,8 +4,8 @@
   "longName": "Sonic",
 	"capabilities": [ "configurable" ],
   "companyName": "Gretchen Maculo",
-  "versionCode": 290,
-  "versionLabel": "2.9",
+  "versionCode": 300,
+  "versionLabel": "3.0",
   "watchapp": {
     "watchface": true
   },
