@@ -110,6 +110,7 @@ static AppSync sync;
 static uint8_t sync_buffer[380];
 static int lat=0;
 static int lon=0;
+static int lastAccelSig=0;
 
 enum WeatherKey {
   WEATHER_CITY = 0, WEATHER_TEMPERATURE, 
@@ -201,7 +202,6 @@ void handle_vibe(bool vibe)
 	else
 		bitmap_layer_set_bitmap(vb_layer, vboff);
 }
-
 
 void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) 
 {
@@ -654,8 +654,8 @@ void showTapPage(int pg)
 	int l2=true;
 	int l3=true;
 	int l4=true;
-	if(pg!=4)
-		compass_service_unsubscribe();
+//	if(pg!=4)
+//		compass_service_unsubscribe();
 	if((pg!=0)&&(pg!=4))
 	{
 		if(splash)
@@ -698,7 +698,7 @@ void showTapPage(int pg)
 		};break;
 		case 4:
 		{
-			compass_service_subscribe(&handle_compass);
+		//	compass_service_subscribe(&handle_compass);
 			l4=false;
 		};
 		case 0:
@@ -725,6 +725,44 @@ void handle_tap(AccelAxisType axis, int32_t direction)
 		tapPage%=5;
 	showTapPage(tapPage);
 }
+
+#define edgelevel 950
+int accelSig(int16_t d)
+{
+	int s=d/edgelevel;
+	if(s<-1)
+		s=-1;
+	if(s>1)
+		s=1;
+	return s+1;
+}
+
+void handle_accel_data(AccelData *data, uint32_t num_samples)
+{
+	int sig=0;
+	{
+		sig=accelSig(data->x)+10*accelSig(data->y)+100*accelSig(data->z);
+if(sig==111)
+	return;
+		if(sig!=lastAccelSig)
+		{
+
+//APP_LOG(APP_LOG_LEVEL_INFO, "-------------------------");
+//APP_LOG(APP_LOG_LEVEL_INFO, "accel: %d -> %d", lastAccelSig, sig);
+//APP_LOG(APP_LOG_LEVEL_INFO, "accel: x:%d  y:%d  z:%d", data->x, data->y, data->z);
+			if(sig==11)
+			{
+				if(lastAccelSig==121)
+					if(data->y<0)
+						light_enable_interaction();
+				if(lastAccelSig==110)
+					handle_tap(0,0);
+			}
+			lastAccelSig=sig;
+		}
+	}
+}
+
 
 void tapTimer()
 {
@@ -1244,11 +1282,13 @@ void init(void)
 					pm=gbitmap_create_with_resource(RESOURCE_ID_PM);
 					riseset=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_RISESET);
 	}
+	accel_data_service_subscribe(1, &handle_accel_data);
+	accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
 	tick_timer_service_subscribe(SECOND_UNIT, &handle_second_tick);
   battery_state_service_subscribe(&handle_battery);
   bluetooth_connection_service_subscribe(&handle_bluetooth);
 	accel_tap_service_subscribe(&handle_tap);
-	
+	compass_service_subscribe(&handle_compass);
 	for(int x=0;x<4;x++)
 	{
 		weather_icon[x]=gbitmap_create_with_resource(WEATHER_ICONS[x]);	
