@@ -10,15 +10,15 @@ static char str_sec[4];
 static float tz=0;	//GMT
 static int showsec=1;
 static int moonpct=-1;
-static GFont *timeF=NULL;
-static GFont *secF=NULL;
-static GFont *dateF=NULL;
-static GFont *calHeadF=NULL;
-static GFont *calDayF=NULL;
-static GFont *calNowF=NULL;
-static GFont *tinyF=NULL;
-static GFont *medF=NULL;
-static GFont *medBF=NULL;
+static GFont timeF;//=NULL;
+static GFont secF;//=NULL;
+static GFont dateF;//=NULL;
+static GFont calHeadF;//=NULL;
+static GFont calDayF;//=NULL;
+static GFont calNowF;//=NULL;
+static GFont tinyF;//=NULL;
+static GFont medF;//=NULL;
+static GFont medBF;//=NULL;
 static uint32_t phaseImages[11]={
 									RESOURCE_ID_PHASE_0, RESOURCE_ID_PHASE_10, RESOURCE_ID_PHASE_20, 
 									RESOURCE_ID_PHASE_30, RESOURCE_ID_PHASE_40, RESOURCE_ID_PHASE_50, 
