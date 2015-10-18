@@ -3,7 +3,13 @@
 #include <time.h>
 #include "watchface.h"
 #include "defines.h"
-
+#if defined(PBL_RECT)
+#define watchW 144
+#define watchH 168
+#elif defined(PBL_ROUND)
+#define watchW 180
+#define watchH 180
+#endif
 static char str_time[10];
 static char str_date[14];
 static char str_sec[4];
@@ -508,7 +514,7 @@ void draw_earth() {
   // Earth's inclination is 23.4 degrees, so sun should vary 23.4/90=.26 up and down
   int sun_y = -sin_lookup((day_of_year - 0.2164) * TRIG_MAX_ANGLE) * .26 * .25;
   // ##### draw the bitmap
-	int w=144;
+	int w=watchW;
 	int h=72;
   int x, y;
 //	if(!world)
@@ -589,7 +595,7 @@ void draw_earth_color(struct Layer *layer, GContext *ctx) {
   int time_offset=0;//(tz+6)*-3600; 
     //if (redraw_counter < REDRAW_INTERVAL) {
     // GBitmap *fb = graphics_capture_frame_buffer_format(ctx, GBitmapFormat8Bit);// 
-    // graphics_draw_bitmap_in_rect(ctx, fb,GRect(0, 0, 144, 72));
+    // graphics_draw_bitmap_in_rect(ctx, fb,GRect(0, 0, watchW, 72));
     //}else {
     //redraw_counter = 0;
 //		if(!world)
@@ -619,14 +625,14 @@ void draw_earth_color(struct Layer *layer, GContext *ctx) {
         // ##### draw the bitmap
         int x, y;
 
-        #define WINDOW_WIDTH 144 
+        #define WINDOW_WIDTH watchW 
   
         GBitmap *fb = graphics_capture_frame_buffer_format(ctx, GBitmapFormat8Bit);//
         uint8_t *fb_data = gbitmap_get_data(fb);   
         uint8_t (*fb_matrix)[WINDOW_WIDTH] = (uint8_t (*)[WINDOW_WIDTH]) fb_data;
   
-        for(x = 0; x < 144; x++) {
-          int x_angle = (int)((float)TRIG_MAX_ANGLE * (float)x / (float)(144));
+        for(x = 0; x < watchW; x++) {
+          int x_angle = (int)((float)TRIG_MAX_ANGLE * (float)x / (float)(watchW));
            for(y = 0; y < 72; y++) {
               int y_angle = (int)((float)TRIG_MAX_ANGLE * (float)y / (float)(72 * 2)) - TRIG_MAX_ANGLE/4;
               // spherical law of cosines
@@ -889,7 +895,7 @@ void drawDecoration(Window *window)
 #ifdef PBL_COLOR
   GRect b = gbitmap_get_bounds(splash);
 #else
-  GRect b = { .origin = { 0,0 }, .size = { 144, 64 } };//splash->bounds;
+  GRect b = { .origin = { 0,0 }, .size = { watchW, 64 } };//splash->bounds;
 #endif
 	int h=b.size.h;
 	splash_layer=bitmap_layer_create((GRect) { .origin = { wetX, (wetY+wetH)-h }, .size = { wetW, h } });
@@ -917,12 +923,12 @@ void drawCalendar(Window* window)
 		tm=localtime(&t);
 	}
 		tm=localtime(&t);
-	int r=((144/7)%7)/2;
+	int r=((watchW/7)%7)/2;
 	for(int row=0;row<calR;row++)
 	{
 		for(int day=0;day<7;day++)
 		{
-			int x=(144/7)*day+calX+r;
+			int x=(watchW/7)*day+calX+r;
 			int y=(calH/calR)*row+calY;
 			calendar[day][row]=text_layer_create((GRect) { .origin = { x, y }, .size = { calDayW, calDayH } });
 			GColor fg=CalendarFGColor;
@@ -980,16 +986,16 @@ void drawWeather(Window* window)
 	layer_add_child(window_layer, weather_layer);
 	//showWeatherLayer();
 	int tempWidth=40;
-	icon_layer = bitmap_layer_create(GRect(144-tempWidth-16, 0, 15, 15));
+	icon_layer = bitmap_layer_create(GRect(watchW-tempWidth-16, 0, 15, 15));
   layer_add_child(weather_layer, bitmap_layer_get_layer(icon_layer));
-  temperature_layer = text_layer_create(GRect(144-tempWidth, 0, tempWidth, 16));
+  temperature_layer = text_layer_create(GRect(watchW-tempWidth, 0, tempWidth, 16));
   text_layer_set_text_color(temperature_layer, WeatherTempNowColor);
   text_layer_set_background_color(temperature_layer, GColorClear);
   text_layer_set_font(temperature_layer, medF);
   text_layer_set_text_alignment(temperature_layer, GTextAlignmentCenter);
   layer_add_child(weather_layer, text_layer_get_layer(temperature_layer));
 
-  city_layer = text_layer_create(GRect(0, 0, 144-tempWidth-16, 16));
+  city_layer = text_layer_create(GRect(0, 0, watchW-tempWidth-16, 16));
   text_layer_set_text_color(city_layer, WeatherCityColor);
   text_layer_set_background_color(city_layer, GColorClear);
   text_layer_set_font(city_layer, tinyF);
@@ -998,8 +1004,8 @@ void drawWeather(Window* window)
 
 	for(int x=0;x<FORECASTDAYS;x++)
 	{
-		int r=(144%FORECASTDAYS)/2;
-		int w=(144/FORECASTDAYS);
+		int r=(watchW%FORECASTDAYS)/2;
+		int w=(watchW/FORECASTDAYS);
 		forecastIcon[x] = bitmap_layer_create(GRect(x*w+r, 27, w, 15));
 		bitmap_layer_set_bitmap(forecastIcon[x], weather_icon[0]);
 		bitmap_layer_set_alignment(forecastIcon[x], GAlignCenter);
@@ -1088,14 +1094,14 @@ void drawWeatherDetail(Window* window)
 {
 	weather_detail_layer=layer_create((GRect) { .origin = { wetX, wetY }, .size = { wetW, wetH } });
 	layer_add_child(window_layer, weather_detail_layer);
-  update_time_layer = text_layer_create(GRect(0, 0, 144, 16));
+  update_time_layer = text_layer_create(GRect(0, 0, watchW, 16));
   text_layer_set_text_color(update_time_layer, UpdatedColor);
   text_layer_set_background_color(update_time_layer, GColorClear);
   text_layer_set_font(update_time_layer, tinyF);
   text_layer_set_text_alignment(update_time_layer, GTextAlignmentCenter);
   layer_add_child(weather_detail_layer, text_layer_get_layer(update_time_layer));	
 
-	riseset_layer=bitmap_layer_create((GRect) { .origin = { 144/2-29-15, 12 }, .size = { 29, 20 } });
+	riseset_layer=bitmap_layer_create((GRect) { .origin = { watchW/2-29-15, 12 }, .size = { 29, 20 } });
 	#ifdef PBL_COLOR
 		bitmap_layer_set_compositing_mode(riseset_layer, GCompOpSet);
 	#else
@@ -1104,14 +1110,14 @@ void drawWeatherDetail(Window* window)
 	bitmap_layer_set_bitmap(riseset_layer, riseset);
 	layer_add_child(weather_detail_layer, bitmap_layer_get_layer(riseset_layer));	
 
-	detailSunrise = text_layer_create(GRect(144/2-15, 14, 144/2, 16));
+	detailSunrise = text_layer_create(GRect(watchW/2-15, 14, watchW/2, 16));
   text_layer_set_text_color(detailSunrise, SunriseColor);
   text_layer_set_background_color(detailSunrise, GColorClear);
   text_layer_set_font(detailSunrise, tinyF);
   text_layer_set_text_alignment(detailSunrise, GTextAlignmentLeft);
   layer_add_child(weather_detail_layer, text_layer_get_layer(detailSunrise));	
 
-  detailSunset = text_layer_create(GRect(144/2-15, 24, 144/2, 16));
+  detailSunset = text_layer_create(GRect(watchW/2-15, 24, watchW/2, 16));
   text_layer_set_text_color(detailSunset, SunsetColor);
   text_layer_set_background_color(detailSunset, GColorClear);
   text_layer_set_font(detailSunset, tinyF);
@@ -1120,14 +1126,14 @@ void drawWeatherDetail(Window* window)
 	moon_layer=bitmap_layer_create((GRect) { .origin = { 4, 35 }, .size = { ms, ms } });
 	layer_add_child(weather_detail_layer, bitmap_layer_get_layer(moon_layer));	
 
-  phase_layer = text_layer_create(GRect(4+ms, 35, 144-ms-4, 16));
+  phase_layer = text_layer_create(GRect(4+ms, 35, watchW-ms-4, 16));
   text_layer_set_text_color(phase_layer, PhaseColor);
   text_layer_set_background_color(phase_layer, GColorClear);
   text_layer_set_font(phase_layer, tinyF);
   text_layer_set_text_alignment(phase_layer, GTextAlignmentCenter);
   layer_add_child(weather_detail_layer, text_layer_get_layer(phase_layer));
 
-  zodiac_layer = text_layer_create(GRect(4+ms, 35+14, 144-ms-4, 16));
+  zodiac_layer = text_layer_create(GRect(4+ms, 35+14, watchW-ms-4, 16));
   text_layer_set_text_color(zodiac_layer, ZodiacColor);
   text_layer_set_background_color(zodiac_layer, GColorClear);
   text_layer_set_font(zodiac_layer, tinyF);
@@ -1140,7 +1146,7 @@ void drawCompass(Window* window)
 {
 	int compassW=91; //sqrt((64*64)+(64*64));
 	int compassH=compassW;
-	int compassX=((144/2)-(compassW/2));
+	int compassX=((watchW/2)-(compassW/2));
 	int compassY=compassX+17;
 	compass_layer=layer_create((GRect) { .origin = { compassX, compassY }, .size = { compassW, compassH } });
 	layer_add_child(window_layer, compass_layer);
