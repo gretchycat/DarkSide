@@ -1,4 +1,4 @@
-
+var appid="fff815e70983b04d70338b35c76f7b80";
 var n0 = parseInt( "0" );
 var f0 = parseFloat( "0.0" );
 var AG = f0;   // Moon's age
@@ -381,7 +381,7 @@ function fetchWeather(latitude, longitude)
 	data["ln"]=parseInt(longitude);
 
 
-var url="http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=5&mode=json";
+var url="http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=5&mode=json&APPID="+appid;
 	console.log("Connecting to: "+url);
 	req.open('GET', url, false);
   req.onload = function(e)
@@ -416,7 +416,7 @@ var url="http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude 
 		}
 	}
 	req.send(null);
-	url="http://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&mode=json";
+	url="http://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&mode=json&APPID="+appid;
 	console.log("Connecting to: "+url);
 	reqW.open('GET', url, false);
 	reqW.onload = function(e) 

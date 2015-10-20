@@ -3,22 +3,34 @@
 #include <time.h>
 #include "watchface.h"
 #include "defines.h"
-
+#if defined (PBL_PLATFORM_APLITE)
+#define watchW 144
+#define watchH 168
+#elif defined(PBL_PLATFORM_BASALT)
+#define watchW 144
+#define watchH 168
+#elif defined(PBL_PLATFORM_CHALK)
+#define watchW 180
+#define watchH 180
+#endif
+//#if defined(PBL_RECT)
+//#elif defined(PBL_ROUND)
+//#endif
 static char str_time[10];
 static char str_date[14];
 static char str_sec[4];
 static float tz=0;	//GMT
 static int showsec=1;
 static int moonpct=-1;
-static GFont *timeF=NULL;
-static GFont *secF=NULL;
-static GFont *dateF=NULL;
-static GFont *calHeadF=NULL;
-static GFont *calDayF=NULL;
-static GFont *calNowF=NULL;
-static GFont *tinyF=NULL;
-static GFont *medF=NULL;
-static GFont *medBF=NULL;
+static GFont timeF;
+static GFont secF;
+static GFont dateF;
+static GFont calHeadF;
+static GFont calDayF;
+static GFont calNowF;
+static GFont tinyF;
+static GFont medF;
+static GFont medBF;
 static uint32_t phaseImages[11]={
 									RESOURCE_ID_PHASE_0, RESOURCE_ID_PHASE_10, RESOURCE_ID_PHASE_20, 
 									RESOURCE_ID_PHASE_30, RESOURCE_ID_PHASE_40, RESOURCE_ID_PHASE_50, 
@@ -698,7 +710,6 @@ void showTapPage(int pg)
 		};break;
 		case 4:
 		{
-		//	compass_service_subscribe(&handle_compass);
 			l4=false;
 		};
 		case 0:
@@ -737,7 +748,7 @@ int accelSig(int16_t d)
 	return s+1;
 }
 
-void handle_accel_data(AccelData *data, uint32_t num_samples)
+/*void handle_accel_data(AccelData *data, uint32_t num_samples)
 {
 	int sig=0;
 	{
@@ -761,7 +772,7 @@ if(sig==111)
 			lastAccelSig=sig;
 		}
 	}
-}
+}*/
 
 
 void tapTimer()
@@ -1282,8 +1293,8 @@ void init(void)
 					pm=gbitmap_create_with_resource(RESOURCE_ID_PM);
 					riseset=gbitmap_create_with_resource(RESOURCE_ID_IMAGE_RISESET);
 	}
-	accel_data_service_subscribe(1, &handle_accel_data);
-	accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
+//	accel_data_service_subscribe(1, &handle_accel_data);
+//	accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
 	tick_timer_service_subscribe(SECOND_UNIT, &handle_second_tick);
   battery_state_service_subscribe(&handle_battery);
   bluetooth_connection_service_subscribe(&handle_bluetooth);
@@ -1311,7 +1322,8 @@ void deinit(void)
   tick_timer_service_unsubscribe();
   battery_state_service_unsubscribe();
   bluetooth_connection_service_unsubscribe();
-	accel_tap_service_unsubscribe();;
+	accel_tap_service_unsubscribe();
+	compass_service_unsubscribe();
   window_destroy(window);
 }
 
