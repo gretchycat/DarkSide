@@ -1,6 +1,6 @@
-#define wetX 0
+#define wetX (watchW-144)/2
 #define wetY (dateY+dateH+2)
-#define wetW bounds.size.w
+#define wetW 144
 #define wetH 64
 
 

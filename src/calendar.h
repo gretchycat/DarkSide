@@ -1,8 +1,8 @@
 
-#define calX 0
+#define calX (watchW-144)/2 
 #define calY (wetY+wetH+2)
-#define calW bounds.size.w
-#define calH (168-calY)
+#define calW 144
+#define calH (watchH-calY)
 #define calR 3
 #define calDayW ((144/7)-1)
 #define calDayH ((calH/calR)-1)
