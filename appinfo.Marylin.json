@@ -4,8 +4,8 @@
   "longName": "Marylin",
 	"capabilities": [ "configurable" ],
   "companyName": "Gretchen Maculo",
-  "versionCode": 300,
-  "versionLabel": "3.0",
+  "versionCode": 310,
+  "versionLabel": "3.1",
   "watchapp": {
     "watchface": true
   },
@@ -303,7 +303,8 @@
   },
   "targetPlatforms": [
     "aplite",
-    "basalt"
+    "basalt",
+		"chalk"
   ],
   "sdkVersion": "3"
 }
