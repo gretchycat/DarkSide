@@ -411,7 +411,7 @@ void drawTime(Window* window)
   text_layer_set_text_alignment(time_layer, timeA);
   text_layer_set_text(time_layer, str_time);
   layer_add_child(window_layer, text_layer_get_layer(time_layer));
-	ampm=bitmap_layer_create((GRect) { .origin = { secX-7, secY+2 }, .size = { 9, 5 } });
+	ampm=bitmap_layer_create((GRect) { .origin = { apX, apY }, .size = { 9, 5 } });
   layer_add_child(window_layer, bitmap_layer_get_layer(ampm));
 }
 
@@ -666,6 +666,8 @@ void showTapPage(int pg)
 	int l2=true;
 	int l3=true;
 	int l4=true;
+if(pg==3)
+	pg++;
 //	if(pg!=4)
 //		compass_service_unsubscribe();
 	if((pg!=0)&&(pg!=4))
@@ -1189,8 +1191,8 @@ void drawCompass(Window* window)
 {
 	int compassW=91; //sqrt((64*64)+(64*64));
 	int compassH=compassW;
-	int compassX=((wetW/2)-(compassW/2));
-	int compassY=compassX+17;
+	int compassX=((watchW/2)-(compassW/2));
+	int compassY=wetY-((91-64)/2);//((watchH/2)-(compassW/2));
 	compass_layer=layer_create((GRect) { .origin = { compassX, compassY }, .size = { compassW, compassH } });
 	layer_add_child(window_layer, compass_layer);
 	compass_image_layerw=rot_bitmap_layer_create(compass_imagew);

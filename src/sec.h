@@ -2,7 +2,7 @@
 #define secX (timeW+timeX)
 #define secY (6+timeY)
 #elif defined(PBL_ROUND)
-#define secX 115
+#define secX 100
 #define secY (timeH+timeY-7)
 #endif
 #define secW (watchW-secX)

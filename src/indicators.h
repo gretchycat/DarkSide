@@ -18,24 +18,32 @@
 #define vbH chargeH
 #define vbX (144-vbW-batW-btW-chargeW-2)
 #define vbY chargeY
+
+#define apX secX-7 
+#define apY secY+2 
+
 #elif defined(PBL_ROUND)
 #define chargeW 8
 #define chargeH 8
-#define chargeX 124-(chargeW/2)
-#define chargeY 25
+#define chargeX 130
+#define chargeY 12
 
 #define batW 16
 #define batH chargeH
-#define batX 124-(batW/2)
-#define batY chargeY+8
-
-#define btW 15
-#define btH chargeH
-#define btX 124-(btW/2)
-#define btY chargeY+16
+#define batX 130
+#define batY 20 
 
 #define vbW 12
-#define vbH chargeH
-#define vbX 124-(vbW/2)
-#define vbY chargeY+24
+#define vbH 8 
+#define vbX 38 
+#define vbY 16 
+
+#define btW 15
+#define btH	8 
+#define btX	vbX-2 
+#define btY vbH+vbY 
+
+#define apX secX+12 
+#define apY dateY 
+
 #endif
