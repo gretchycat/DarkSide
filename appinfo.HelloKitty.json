@@ -1,0 +1,310 @@
+{
+  "uuid": "971f48bf-f215-454e-8cad-8b6949c62f27",
+  "shortName": "HelloKitty",
+  "longName": "HelloKitty",
+	"capabilities": [ "configurable" ],
+  "companyName": "Gretchen Maculo",
+  "versionCode": 310,
+  "versionLabel": "3.1",
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {
+    "ct": 0,
+    "tm": 1,
+    "ic0": 2,
+    "mn0": 3,
+    "mx0": 4,
+    "dt0": 5,
+    "ic1": 6,
+    "mn1": 7,
+    "mx1": 8,
+    "dt1": 9,
+    "ic2": 10,
+    "mn2": 11,
+    "mx2": 12,
+    "dt2": 13,
+    "ic3": 14,
+    "mn3": 15,
+    "mx3": 16,
+    "dt3": 17,
+    "ic4": 18,
+    "mn4": 19,
+    "mx4": 20,
+    "dt4": 21,
+    "sr": 22,
+    "ss": 23,
+    "tz": 24,
+    "mn": 25,
+		"ps": 26,
+		"zd": 27,
+		"sc": 28,
+		"lt": 29,
+		"ln": 30,
+		"vb": 31
+  },
+  "resources": {
+    "media": [
+      {
+				"characterRegex": "[\\s:0-9]",
+        "type": "font",
+        "name": "FONT_BEYOND_30_BOLD",
+        "file": "fonts/HelloKitty/BeyondTheLightedStage.ttf"
+      },
+      {
+				"characterRegex": "[0-9]",
+        "type": "font",
+        "name": "FONT_BEYOND_24_BOLD",
+        "file": "fonts/HelloKitty/BeyondTheLightedStage.ttf"
+      },
+      {
+				"characterRegex": "[0-9/]",
+        "type": "font",
+        "name": "FONT_BEYOND_16",
+        "file": "fonts/HelloKitty/BeyondTheLightedStage.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_UBUNTU_10",
+        "file": "fonts/HelloKitty/Ubuntu-M.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_UBUNTU_14",
+        "file": "fonts/HelloKitty/Ubuntu-M.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_UBUNTU_14_BOLD",
+        "file": "fonts/HelloKitty/Ubuntu-M.ttf"
+      },
+      {
+        "type": "png",
+        "name": "SPLASH",
+        "file": "images/HelloKitty/darkside.png"
+      },
+      {
+        "type": "png",
+        "name": "AM",
+        "file": "images/HelloKitty/am.png"
+      },
+      {
+        "type": "png",
+        "name": "PM",
+        "file": "images/HelloKitty/pm.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_0",
+        "file": "images/HelloKitty/b000.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_10",
+        "file": "images/HelloKitty/b010.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_20",
+        "file": "images/HelloKitty/b020.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_30",
+        "file": "images/HelloKitty/b030.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_40",
+        "file": "images/HelloKitty/b040.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_50",
+        "file": "images/HelloKitty/b050.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_60",
+        "file": "images/HelloKitty/b060.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_70",
+        "file": "images/HelloKitty/b070.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_80",
+        "file": "images/HelloKitty/b080.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_90",
+        "file": "images/HelloKitty/b090.png"
+      },
+      {
+        "type": "png",
+        "name": "BATTERY_100",
+        "file": "images/HelloKitty/b100.png"
+      },
+      {
+        "type": "png",
+        "name": "CHARGE",
+        "file": "images/HelloKitty/charge.png"
+      },
+      {
+        "type": "png",
+        "name": "BTON",
+        "file": "images/HelloKitty/bton.png"
+      },
+      {
+        "type": "png",
+        "name": "BTOFF",
+        "file": "images/HelloKitty/btoff.png"
+      },
+      {
+        "type": "png",
+        "name": "VIBEON",
+        "file": "images/HelloKitty/vibeon.png"
+      },
+      {
+        "type": "png",
+        "name": "VIBEOFF",
+        "file": "images/HelloKitty/vibeoff.png"
+      },
+      {
+        "type": "png",
+        "name": "BACK",
+        "file": "images/HelloKitty/back.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_SUN",
+        "file": "images/HelloKitty/sun.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_RAIN",
+        "file": "images/HelloKitty/rain.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_CLOUD",
+        "file": "images/HelloKitty/cloud.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_SNOW",
+        "file": "images/HelloKitty/snow.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_THUNDER",
+        "file": "images/HelloKitty/thunder.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_MIST",
+        "file": "images/HelloKitty/mist.png"
+      },
+      {
+			  "type": "png",
+        "name": "IMAGE_MOON_PHASES",
+        "file": "images/HelloKitty/phases.png"
+      },
+			{
+        "type": "png",
+        "name": "IMAGE_EXTREME",
+        "file": "images/HelloKitty/extreme.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_COMPASS",
+        "file": "images/HelloKitty/compass.png"
+      },
+			{
+        "type": "png",
+        "name": "IMAGE_COMPASS_BACK",
+        "file": "images/HelloKitty/compass_back.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_RISESET",
+        "file": "images/HelloKitty/sunriseset.png"
+      },
+      {
+        "type": "png",
+        "menuIcon": true,
+        "name": "IMAGE_MENU_ICON",
+        "file": "images/HelloKitty/darkside-icon.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_0",
+        "file": "images/HelloKitty/phase0.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_10",
+        "file": "images/HelloKitty/phase10.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_20",
+        "file": "images/HelloKitty/phase20.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_30",
+        "file": "images/HelloKitty/phase30.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_40",
+        "file": "images/HelloKitty/phase40.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_50",
+        "file": "images/HelloKitty/phase50.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_60",
+        "file": "images/HelloKitty/phase60.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_70",
+        "file": "images/HelloKitty/phase70.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_80",
+        "file": "images/HelloKitty/phase80.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_90",
+        "file": "images/HelloKitty/phase90.png"
+      },
+      {
+        "type": "png",
+        "name": "PHASE_100",
+        "file": "images/HelloKitty/phase100.png"
+      },
+			{
+				"type": "png",
+				"name": "WORLD",
+				"file": "images/HelloKitty/world.png"
+			}
+    ]
+  },
+  "targetPlatforms": [
+    "aplite",
+    "basalt",
+		"chalk"
+  ],
+  "sdkVersion": "3"
+}

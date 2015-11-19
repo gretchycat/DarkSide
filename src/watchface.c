@@ -666,8 +666,6 @@ void showTapPage(int pg)
 	int l2=true;
 	int l3=true;
 	int l4=true;
-if(pg==3)
-	pg++;
 //	if(pg!=4)
 //		compass_service_unsubscribe();
 	if((pg!=0)&&(pg!=4))
